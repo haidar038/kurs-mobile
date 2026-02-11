@@ -19,6 +19,8 @@ CREATE POLICY "pickups_update_own_cancel" ON public.pickup_requests
   );
 
 -- 2. Allow users to register as collectors (Insert their own collector record)
+DROP POLICY IF EXISTS "collectors_insert_self" ON public.collectors;
+
 CREATE POLICY "collectors_insert_self" ON public.collectors
   FOR INSERT WITH CHECK (
     user_id = auth.uid()

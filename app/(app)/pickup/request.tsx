@@ -141,17 +141,29 @@ export default function PickupRequestScreen() {
             const uploadedPhotos: string[] = [];
             for (const photoUri of pickupDraft.photos) {
                 const fileName = `${user?.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-                const response = await fetch(photoUri);
-                const blob = await response.blob();
 
-                const { data, error } = await supabase.storage.from("pickup-photos").upload(fileName, blob, {
+                console.log("Preparing to upload:", photoUri);
+                // Use ArrayBuffer instead of Blob for better RN compatibility on Android
+                const response = await fetch(photoUri);
+                const arrayBuffer = await response.arrayBuffer();
+
+                console.log(`File size: ${arrayBuffer.byteLength} bytes`);
+
+                if (arrayBuffer.byteLength === 0) {
+                    throw new Error("Gagal membaca file foto (0 bytes).");
+                }
+
+                const { data, error } = await supabase.storage.from("pickup-photos").upload(fileName, arrayBuffer, {
                     contentType: "image/jpeg",
+                    upsert: false,
                 });
 
-                if (error) throw error;
+                if (error) {
+                    console.error("Supabase storage upload error:", error);
+                    throw error;
+                }
 
                 const { data: urlData } = supabase.storage.from("pickup-photos").getPublicUrl(data.path);
-
                 uploadedPhotos.push(urlData.publicUrl);
             }
 

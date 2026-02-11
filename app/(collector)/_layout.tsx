@@ -14,14 +14,7 @@ export default function CollectorLayout() {
     }
 
     // Guard: Must be logged in and have collector role
-    // OR if we are strict about "desiredRole", check that too.
-    // For now, let's just check if they HAVE the role.
-    // If they switched to 'user' mode, they shouldn't be here?
-    // Yes, if desiredRole is 'user', they should be in /(app).
-
     if (!profile || (profile.role !== "collector" && profile.role !== "operator" && profile.role !== "admin")) {
-        // If they are not a collector (or higher), kick them out.
-        // Note: 'admin' might want to see this view for testing.
         return <Redirect href={"/(tabs)/home" as any} />;
     }
 
@@ -35,7 +28,8 @@ export default function CollectorLayout() {
                 headerShown: false,
             }}
         >
-            <Stack.Screen name="dashboard" />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="job/[id]" options={{ headerShown: true, title: "Detail Pekerjaan" }} />
         </Stack>
     );
 }

@@ -4,7 +4,7 @@ import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
@@ -37,14 +37,21 @@ export default function ProfileScreen() {
     );
 
     const handleSignOut = () => {
-        Alert.alert("Keluar", "Yakin ingin keluar dari akun?", [
-            { text: "Batal", style: "cancel" },
-            {
-                text: "Keluar",
-                style: "destructive",
-                onPress: signOut,
-            },
-        ]);
+        if (Platform.OS === "web") {
+            const confirm = window.confirm("Yakin ingin keluar dari akun?");
+            if (confirm) {
+                signOut();
+            }
+        } else {
+            Alert.alert("Keluar", "Yakin ingin keluar dari akun?", [
+                { text: "Batal", style: "cancel" },
+                {
+                    text: "Keluar",
+                    style: "destructive",
+                    onPress: signOut,
+                },
+            ]);
+        }
     };
 
     const MenuItem = ({ icon, label, onPress, danger }: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void; danger?: boolean }) => (

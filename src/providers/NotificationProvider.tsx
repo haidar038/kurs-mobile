@@ -1,19 +1,29 @@
 import { useAuth } from "@/providers/AuthProvider";
 import type { KursNotificationType } from "@/utils/notifications";
-import { registerForPushNotifications } from "@/utils/notifications";
+import { initNotificationHandler, registerForPushNotifications } from "@/utils/notifications";
+import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 /**
  * Wraps the app tree to handle:
  * 1. Push token registration on login
  * 2. Foreground notification responses (tap → navigate)
+ *
+ * All functionality is disabled inside Expo Go (SDK 53+) to avoid crashes.
  */
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
     const router = useRouter();
     const responseListener = useRef<Notifications.EventSubscription | null>(null);
+
+    // Initialise notification handler once (no-op in Expo Go)
+    useEffect(() => {
+        initNotificationHandler();
+    }, []);
 
     // Register push token when user is authenticated
     useEffect(() => {
@@ -22,8 +32,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         }
     }, [user?.id]);
 
-    // Listen for notification taps
+    // Listen for notification taps (skip in Expo Go)
     useEffect(() => {
+        if (isExpoGo) return;
+
         responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
             const data = response.notification.request.content.data as {
                 type?: KursNotificationType;

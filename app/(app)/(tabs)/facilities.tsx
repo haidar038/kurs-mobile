@@ -7,6 +7,12 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
+interface OpeningHours {
+    open: string;
+    close: string;
+    closed: boolean;
+}
+
 interface Facility {
     id: string;
     name: string;
@@ -14,7 +20,7 @@ interface Facility {
     address: string | null;
     location: { latitude: number; longitude: number } | null;
     contact: string | null;
-    opening_hours: { open: string; close: string } | null;
+    opening_hours: Record<string, OpeningHours> | null;
 }
 
 const FACILITY_TYPES = {
@@ -39,7 +45,6 @@ export default function FacilitiesScreen() {
         try {
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== "granted") {
-                // Permission denied, just ignore and don't show distance
                 return;
             }
 
@@ -49,7 +54,6 @@ export default function FacilitiesScreen() {
                 longitude: location.coords.longitude,
             });
         } catch (error) {
-            // Location services might be disabled, or timeout
             console.log("Location error (gracefully handled):", error);
         }
     };
@@ -59,7 +63,18 @@ export default function FacilitiesScreen() {
             const { data, error } = await supabase.from("facilities").select("*").order("name");
 
             if (error) throw error;
-            setFacilities((data || []) as Facility[]);
+
+            const formattedData = (data || []).map((item: any) => ({
+                ...item,
+                location: item.location
+                    ? {
+                          latitude: item.location.lat,
+                          longitude: item.location.lng,
+                      }
+                    : null,
+            }));
+
+            setFacilities(formattedData as Facility[]);
         } catch (error) {
             console.error("Fetch facilities error:", error);
         } finally {
@@ -156,14 +171,21 @@ export default function FacilitiesScreen() {
                     </View>
                 )}
 
-                {item.opening_hours && (
-                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 6 }}>
-                        <Ionicons name="time-outline" size={14} color={COLORS.textSecondary} />
-                        <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginLeft: 6 }}>
-                            {item.opening_hours.open} - {item.opening_hours.close}
-                        </Text>
-                    </View>
-                )}
+                {item.opening_hours &&
+                    (() => {
+                        const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+                        const today = days[new Date().getDay()];
+                        const todayHours = item.opening_hours[today];
+
+                        if (!todayHours) return null;
+
+                        return (
+                            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 6 }}>
+                                <Ionicons name="time-outline" size={14} color={COLORS.textSecondary} />
+                                <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginLeft: 6 }}>{todayHours.closed ? "Tutup" : `${todayHours.open} - ${todayHours.close}`}</Text>
+                            </View>
+                        );
+                    })()}
 
                 {/* Action Buttons */}
                 <View style={{ flexDirection: "row", marginTop: 12, gap: 8 }}>

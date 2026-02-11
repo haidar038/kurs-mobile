@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 function RootLayoutNav() {
-    const { session, isLoading, profile } = useAuth();
+    const { session, isLoading, profile, signOut } = useAuth();
     const segments = useSegments();
     const router = useRouter();
 
@@ -26,8 +26,16 @@ function RootLayoutNav() {
             if (inAuthGroup) {
                 // Redirect to appropriate home based on role
                 const role = profile?.role ?? "user";
+
+                if (role === "admin") {
+                    // Admin should not use the mobile app
+                    alert("Akses Ditolak: Admin harap menggunakan dashboard web.");
+                    signOut();
+                    return;
+                }
+
                 if (role === "collector") {
-                    router.replace("/(collector)/jobs");
+                    router.replace("/(collector)/(tabs)/dashboard");
                 } else if (role === "waste_bank_staff") {
                     router.replace("/(waste-bank)/scan");
                 } else {
@@ -35,7 +43,7 @@ function RootLayoutNav() {
                 }
             }
         }
-    }, [session, isLoading, segments, profile]);
+    }, [session, isLoading, segments, profile, router, signOut]);
 
     if (isLoading) {
         return (

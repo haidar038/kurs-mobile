@@ -37,6 +37,10 @@ UPDATE public.profiles SET role = 'user' WHERE role IS NULL OR role NOT IN (
   'guest', 'user', 'collector', 'waste_bank_staff', 'facility_admin', 'operator', 'support', 'admin'
 );
 
+-- Drop policies that depend on the role column being text
+DROP POLICY IF EXISTS "Admins can update collectors" ON public.collectors;
+DROP POLICY IF EXISTS "Admins can update profiles" ON public.profiles;
+
 -- Convert column to enum
 ALTER TABLE public.profiles 
   ALTER COLUMN role TYPE user_role USING role::user_role;
@@ -63,29 +67,65 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_select_admin" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_admin" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
 
 -- Collectors  
 DROP POLICY IF EXISTS "Collectors are viewable by authenticated" ON public.collectors;
 DROP POLICY IF EXISTS "Collectors can update own record" ON public.collectors;
+DROP POLICY IF EXISTS "collectors_select_auth" ON public.collectors;
+DROP POLICY IF EXISTS "collectors_update_own" ON public.collectors;
+DROP POLICY IF EXISTS "collectors_all_admin" ON public.collectors;
 
 -- Facilities
 DROP POLICY IF EXISTS "Facilities are public" ON public.facilities;
+DROP POLICY IF EXISTS "facilities_select_public" ON public.facilities;
+DROP POLICY IF EXISTS "facilities_all_facility_admin" ON public.facilities;
+DROP POLICY IF EXISTS "facilities_all_admin" ON public.facilities;
 
 -- Pickup requests
 DROP POLICY IF EXISTS "Users can read own pickups" ON public.pickup_requests;
 DROP POLICY IF EXISTS "Users can insert own pickups" ON public.pickup_requests;
 DROP POLICY IF EXISTS "Users and collectors can update pickups" ON public.pickup_requests;
 DROP POLICY IF EXISTS "Collectors can view available pickups" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_select_own" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_select_collector" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_select_available" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_select_admin" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_insert_own" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_insert_admin" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_update_collector" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_update_own_cancel" ON public.pickup_requests;
+DROP POLICY IF EXISTS "pickups_update_admin" ON public.pickup_requests;
 
 -- Deposits
 DROP POLICY IF EXISTS "Users can read own deposits" ON public.deposits;
 DROP POLICY IF EXISTS "Staff can insert deposits" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_select_own" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_select_staff" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_select_facility_admin" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_select_admin" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_insert_staff" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_insert_facility_admin" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_insert_admin" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_update_staff" ON public.deposits;
+DROP POLICY IF EXISTS "deposits_update_admin" ON public.deposits;
 
 -- Articles
 DROP POLICY IF EXISTS "Published articles are public" ON public.articles;
+DROP POLICY IF EXISTS "articles_select_public" ON public.articles;
+DROP POLICY IF EXISTS "articles_all_admin" ON public.articles;
 
 -- Bookmarks
 DROP POLICY IF EXISTS "Users can manage own bookmarks" ON public.bookmarks;
+DROP POLICY IF EXISTS "bookmarks_all_own" ON public.bookmarks;
+
+-- Payments
+DROP POLICY IF EXISTS "payments_select_own" ON public.payments;
+DROP POLICY IF EXISTS "payments_all_admin" ON public.payments;
 
 -- ============================================
 -- 6. Create RBAC-aware RLS policies

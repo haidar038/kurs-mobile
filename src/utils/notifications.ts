@@ -1,23 +1,41 @@
 import { supabase } from "@/lib/supabase";
+import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-// Configure default notification behavior
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowBanner: true,
-        shouldShowList: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-    }),
-});
+/** Returns true when running inside Expo Go (where push is unsupported since SDK 53). */
+function isExpoGo(): boolean {
+    return Constants.appOwnership === "expo";
+}
+
+/**
+ * Call this once (e.g. from NotificationProvider) to set the default
+ * notification handler. Skipped automatically inside Expo Go.
+ */
+export function initNotificationHandler(): void {
+    if (isExpoGo()) return;
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowBanner: true,
+            shouldShowList: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        }),
+    });
+}
 
 /**
  * Register for push notifications and return the Expo push token.
  * Saves the token to the user's profile in Supabase.
  */
 export async function registerForPushNotifications(userId: string): Promise<string | null> {
+    if (isExpoGo()) {
+        console.log("Push notifications are not supported in Expo Go (SDK 53+). Use a development build.");
+        return null;
+    }
+
     if (!Device.isDevice) {
         console.log("Push notifications require a physical device.");
         return null;
@@ -46,7 +64,12 @@ export async function registerForPushNotifications(userId: string): Promise<stri
         });
     }
 
-    const tokenData = await Notifications.getExpoPushTokenAsync();
+    // Resolve projectId from app config (required in bare / dev-build workflows)
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId as string | undefined;
+
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+        projectId: projectId ?? undefined,
+    });
     const token = tokenData.data;
 
     // Save token to user metadata (no extra DB column needed)
@@ -72,6 +95,8 @@ export interface KursNotificationData {
  * Schedule a local notification (useful for testing or offline scenarios).
  */
 export async function scheduleLocalNotification(data: KursNotificationData): Promise<void> {
+    if (isExpoGo()) return;
+
     await Notifications.scheduleNotificationAsync({
         content: {
             title: data.title,

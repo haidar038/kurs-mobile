@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import MapView, { type MapPressEvent, Marker, type Region } from "react-native-maps";
+import MapView, { type MapPressEvent, Marker, type Region } from "./MapLib";
 
 interface LocationResult {
     latitude: number;
