@@ -42,8 +42,10 @@ app-example
 /ios
 /android
 
+.agent
 .env
-.vscodeerr
+.vscode
+err
 docs
 schema
 err
