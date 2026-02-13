@@ -175,7 +175,11 @@ export default function FacilitiesScreen() {
                     (() => {
                         const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
                         const today = days[new Date().getDay()];
-                        const todayHours = item.opening_hours[today];
+
+                        // Parse if it's a string (though it should be an object if JSONB)
+                        const hoursRecord = typeof item.opening_hours === "string" ? (JSON.parse(item.opening_hours) as Record<string, OpeningHours>) : (item.opening_hours as Record<string, OpeningHours>);
+
+                        const todayHours = hoursRecord[today];
 
                         if (!todayHours) return null;
 

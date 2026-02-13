@@ -44,18 +44,23 @@ export default function DepositFormScreen() {
         setIsLoading(true);
 
         try {
+            // Get user's facility_id
+            const { data: userProfile, error: profileError } = await supabase.from("profiles").select("facility_id").eq("id", user!.id).single();
+
+            if (profileError) throw profileError;
+
             // Upload photos
             const uploadedPhotos: string[] = [];
             for (const uri of photos) {
                 const fileName = `deposits/${depositor_id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
                 const response = await fetch(uri);
-                const blob = await response.blob();
+                const arrayBuffer = await response.arrayBuffer();
 
-                const { data, error } = await supabase.storage.from("deposit-photos").upload(fileName, blob, { contentType: "image/jpeg" });
+                const { data, error } = await supabase.storage.from("deposits").upload(fileName, arrayBuffer, { contentType: "image/jpeg" });
 
                 if (error) throw error;
 
-                const { data: urlData } = supabase.storage.from("deposit-photos").getPublicUrl(data.path);
+                const { data: urlData } = supabase.storage.from("deposits").getPublicUrl(data.path);
 
                 uploadedPhotos.push(urlData.publicUrl);
             }
@@ -64,6 +69,7 @@ export default function DepositFormScreen() {
             const { error } = await supabase.from("deposits").insert({
                 depositor_id,
                 verified_by: user?.id,
+                waste_bank_id: userProfile?.facility_id,
                 waste_type: wasteType,
                 weight: parseFloat(weight),
                 photos: uploadedPhotos,

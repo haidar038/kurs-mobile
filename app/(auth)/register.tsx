@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
     const [fullName, setFullName] = useState("");
@@ -121,115 +122,116 @@ export default function RegisterScreen() {
     );
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-            <ScrollView
-                contentContainerStyle={{
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    paddingHorizontal: 24,
-                    paddingVertical: 48,
-                    backgroundColor: COLORS.background,
-                }}
-                keyboardShouldPersistTaps="handled"
-            >
-                {/* Header */}
-                <View style={{ alignItems: "center", marginBottom: 40 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: "center",
+                        paddingHorizontal: 24,
+                        paddingVertical: 48,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {/* Header */}
+                    <View style={{ alignItems: "center", marginBottom: 40 }}>
+                        <View
+                            style={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: 20,
+                                backgroundColor: COLORS.primary + "15",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginBottom: 16,
+                            }}
+                        >
+                            <Ionicons name="person-add" size={32} color={COLORS.primary} />
+                        </View>
+                        <Text
+                            style={{
+                                fontSize: 28,
+                                fontWeight: "bold",
+                                color: COLORS.text,
+                                fontFamily: "GoogleSans-Bold",
+                            }}
+                        >
+                            Daftar Akun
+                        </Text>
+                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 8, textAlign: "center", fontFamily: "GoogleSans-Regular" }}>Buat akun untuk mulai menggunakan KURS</Text>
+                    </View>
+
+                    {/* Form */}
+                    <View style={{ gap: 16 }}>
+                        <InputField label="Nama Lengkap" icon="person-outline" value={fullName} onChangeText={setFullName} placeholder="Nama lengkap" autoComplete="name" />
+
+                        <InputField label="Email" icon="mail-outline" value={email} onChangeText={setEmail} placeholder="email@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
+
+                        <InputField
+                            label="Password"
+                            icon="lock-closed-outline"
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Minimal 6 karakter"
+                            secureTextEntry
+                            showToggle
+                            isVisible={showPassword}
+                            onToggle={() => setShowPassword(!showPassword)}
+                            autoComplete="new-password"
+                        />
+
+                        <InputField
+                            label="Konfirmasi Password"
+                            icon="lock-closed-outline"
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
+                            placeholder="Ulangi password"
+                            secureTextEntry
+                            showToggle
+                            isVisible={showConfirmPassword}
+                            onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+                            autoComplete="new-password"
+                        />
+
+                        <TouchableOpacity
+                            onPress={handleRegister}
+                            disabled={isLoading}
+                            style={{
+                                backgroundColor: COLORS.primary,
+                                paddingVertical: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                                marginTop: 8,
+                                opacity: isLoading ? 0.7 : 1,
+                                shadowColor: COLORS.primary,
+                                shadowOffset: { width: 0, height: 4 },
+                                shadowOpacity: 0.3,
+                                shadowRadius: 8,
+                                elevation: 4,
+                            }}
+                        >
+                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar</Text>}
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Footer */}
                     <View
                         style={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: 20,
-                            backgroundColor: COLORS.primary + "15",
-                            alignItems: "center",
+                            flexDirection: "row",
                             justifyContent: "center",
-                            marginBottom: 16,
+                            marginTop: 32,
+                            gap: 4,
                         }}
                     >
-                        <Ionicons name="person-add" size={32} color={COLORS.primary} />
+                        <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Sudah punya akun?</Text>
+                        <Link href="/(auth)/login" asChild>
+                            <TouchableOpacity>
+                                <Text style={{ color: COLORS.primary, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Masuk</Text>
+                            </TouchableOpacity>
+                        </Link>
                     </View>
-                    <Text
-                        style={{
-                            fontSize: 28,
-                            fontWeight: "bold",
-                            color: COLORS.text,
-                            fontFamily: "GoogleSans-Bold",
-                        }}
-                    >
-                        Daftar Akun
-                    </Text>
-                    <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 8, textAlign: "center", fontFamily: "GoogleSans-Regular" }}>Buat akun untuk mulai menggunakan KURS</Text>
-                </View>
-
-                {/* Form */}
-                <View style={{ gap: 16 }}>
-                    <InputField label="Nama Lengkap" icon="person-outline" value={fullName} onChangeText={setFullName} placeholder="Nama lengkap" autoComplete="name" />
-
-                    <InputField label="Email" icon="mail-outline" value={email} onChangeText={setEmail} placeholder="email@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
-
-                    <InputField
-                        label="Password"
-                        icon="lock-closed-outline"
-                        value={password}
-                        onChangeText={setPassword}
-                        placeholder="Minimal 6 karakter"
-                        secureTextEntry
-                        showToggle
-                        isVisible={showPassword}
-                        onToggle={() => setShowPassword(!showPassword)}
-                        autoComplete="new-password"
-                    />
-
-                    <InputField
-                        label="Konfirmasi Password"
-                        icon="lock-closed-outline"
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                        placeholder="Ulangi password"
-                        secureTextEntry
-                        showToggle
-                        isVisible={showConfirmPassword}
-                        onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
-                        autoComplete="new-password"
-                    />
-
-                    <TouchableOpacity
-                        onPress={handleRegister}
-                        disabled={isLoading}
-                        style={{
-                            backgroundColor: COLORS.primary,
-                            paddingVertical: 16,
-                            borderRadius: 12,
-                            alignItems: "center",
-                            marginTop: 8,
-                            opacity: isLoading ? 0.7 : 1,
-                            shadowColor: COLORS.primary,
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 8,
-                            elevation: 4,
-                        }}
-                    >
-                        {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar</Text>}
-                    </TouchableOpacity>
-                </View>
-
-                {/* Footer */}
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        marginTop: 32,
-                        gap: 4,
-                    }}
-                >
-                    <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Sudah punya akun?</Text>
-                    <Link href="/(auth)/login" asChild>
-                        <TouchableOpacity>
-                            <Text style={{ color: COLORS.primary, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Masuk</Text>
-                        </TouchableOpacity>
-                    </Link>
-                </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

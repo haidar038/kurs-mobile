@@ -6,6 +6,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
+interface OpeningHours {
+    open: string;
+    close: string;
+    closed: boolean;
+}
+
 interface Facility {
     id: string;
     name: string;
@@ -13,7 +19,7 @@ interface Facility {
     address: string | null;
     location: { latitude: number; longitude: number } | null;
     contact: string | null;
-    opening_hours: { open: string; close: string } | null;
+    opening_hours: Record<string, OpeningHours> | null;
 }
 
 const FACILITY_TYPES = {
@@ -37,7 +43,19 @@ export default function FacilityDetailScreen() {
             const { data, error } = await supabase.from("facilities").select("*").eq("id", id).single();
 
             if (error) throw error;
-            setFacility(data as Facility);
+
+            const formattedData = {
+                ...data,
+                location:
+                    data.location && typeof data.location === "object"
+                        ? {
+                              latitude: (data.location as any).lat,
+                              longitude: (data.location as any).lng,
+                          }
+                        : null,
+            };
+
+            setFacility(formattedData as Facility);
         } catch (error) {
             console.error("Fetch facility error:", error);
         } finally {
@@ -159,18 +177,16 @@ export default function FacilityDetailScreen() {
                 )}
 
                 {/* Opening Hours */}
-                {facility.opening_hours && (
-                    <View
-                        style={{
-                            backgroundColor: COLORS.surface,
-                            padding: 16,
-                            borderRadius: 12,
-                            borderWidth: 1,
-                            borderColor: COLORS.border,
-                            flexDirection: "row",
-                            alignItems: "flex-start",
-                        }}
-                    >
+                <View
+                    style={{
+                        backgroundColor: COLORS.surface,
+                        padding: 16,
+                        borderRadius: 12,
+                        borderWidth: 1,
+                        borderColor: COLORS.border,
+                    }}
+                >
+                    <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 12 }}>
                         <View
                             style={{
                                 width: 40,
@@ -185,12 +201,65 @@ export default function FacilityDetailScreen() {
                         </View>
                         <View style={{ marginLeft: 12, flex: 1 }}>
                             <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginBottom: 2 }}>Jam Operasional</Text>
-                            <Text style={{ fontSize: 14, color: COLORS.text }}>
-                                {facility.opening_hours.open} - {facility.opening_hours.close}
-                            </Text>
+                            <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text }}>Jadwal Mingguan</Text>
                         </View>
                     </View>
-                )}
+
+                    {(() => {
+                        if (!facility.opening_hours) {
+                            return <Text style={{ fontSize: 13, color: COLORS.textSecondary }}>Jam operasional tidak tersedia</Text>;
+                        }
+
+                        const dayKeys = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+                        const dayLabels: Record<string, string> = {
+                            monday: "Senin",
+                            tuesday: "Selasa",
+                            wednesday: "Rabu",
+                            thursday: "Kamis",
+                            friday: "Jumat",
+                            saturday: "Sabtu",
+                            sunday: "Minggu",
+                        };
+
+                        const hoursRecord = typeof facility.opening_hours === "string" ? (JSON.parse(facility.opening_hours) as Record<string, OpeningHours>) : (facility.opening_hours as Record<string, OpeningHours>);
+
+                        const today = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][new Date().getDay()];
+
+                        return (
+                            <View style={{ gap: 8 }}>
+                                {dayKeys.map((day) => {
+                                    const hours = hoursRecord[day];
+                                    const isToday = day === today;
+                                    if (!hours) return null;
+
+                                    return (
+                                        <View key={day} style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                                            <Text
+                                                style={{
+                                                    fontSize: 13,
+                                                    color: isToday ? COLORS.primary : COLORS.text,
+                                                    fontWeight: isToday ? "700" : "400",
+                                                }}
+                                            >
+                                                {dayLabels[day]}
+                                                {isToday ? " (Hari Ini)" : ""}
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 13,
+                                                    color: hours.closed ? COLORS.error : isToday ? COLORS.primary : COLORS.textSecondary,
+                                                    fontWeight: isToday ? "600" : "400",
+                                                }}
+                                            >
+                                                {hours.closed ? "Tutup" : `${hours.open} - ${hours.close}`}
+                                            </Text>
+                                        </View>
+                                    );
+                                })}
+                            </View>
+                        );
+                    })()}
+                </View>
 
                 {/* Contact */}
                 {facility.contact && (

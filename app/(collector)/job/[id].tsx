@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 import type { PickupRequest } from "@/types/database";
 import { COLORS, PICKUP_STATUS_LABELS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,12 +12,59 @@ export default function CollectorJobDetailScreen() {
     const router = useRouter();
     const queryClient = useQueryClient();
 
+    const { user } = useAuth();
+
     const { data: pickup, isLoading } = useQuery({
         queryKey: ["pickup", id],
         queryFn: async () => {
             const { data, error } = await supabase.from("pickup_requests").select("*").eq("id", id).single();
             if (error) throw error;
             return data as PickupRequest;
+        },
+    });
+
+    const { data: collector } = useQuery({
+        queryKey: ["collector", user?.id],
+        queryFn: async () => {
+            const { data, error } = await supabase.from("collectors").select("*").eq("user_id", user!.id).single();
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!user?.id,
+    });
+
+    const { data: payment } = useQuery({
+        queryKey: ["payment", id],
+        queryFn: async () => {
+            const { data, error } = await supabase.from("payments").select("*").eq("pickup_request_id", id).eq("status", "completed").maybeSingle();
+            if (error && error.code !== "PGRST116") throw error;
+            return data;
+        },
+    });
+
+    const acceptJobMutation = useMutation({
+        mutationFn: async () => {
+            if (!collector?.id) throw new Error("Collector ID not found");
+
+            const { error } = await supabase
+                .from("pickup_requests")
+                .update({
+                    collector_id: collector.id,
+                    status: "assigned",
+                    updated_at: new Date().toISOString(),
+                })
+                .eq("id", id);
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pickup", id] });
+            queryClient.invalidateQueries({ queryKey: ["my-jobs"] });
+            queryClient.invalidateQueries({ queryKey: ["available-jobs"] });
+            Alert.alert("Berhasil", "Job berhasil diambil!");
+        },
+        onError: (error) => {
+            Alert.alert("Error", "Gagal mengambil job: " + error.message);
         },
     });
 
@@ -30,6 +78,13 @@ export default function CollectorJobDetailScreen() {
             queryClient.invalidateQueries({ queryKey: ["my-jobs"] });
         },
     });
+
+    const handleAcceptJob = () => {
+        Alert.alert("Ambil Job", "Apakah Anda yakin ingin mengambil job ini?", [
+            { text: "Batal", style: "cancel" },
+            { text: "Ya, Ambil", onPress: () => acceptJobMutation.mutate() },
+        ]);
+    };
 
     const handleStartPickup = () => {
         Alert.alert("Mulai Pickup", "Konfirmasi bahwa Anda sedang menuju lokasi?", [
@@ -180,6 +235,22 @@ export default function CollectorJobDetailScreen() {
 
             {/* Actions */}
             <View style={{ gap: 12, marginTop: 8 }}>
+                {pickup.status === "requested" && (
+                    <TouchableOpacity
+                        onPress={handleAcceptJob}
+                        disabled={acceptJobMutation.isPending}
+                        style={{
+                            backgroundColor: COLORS.primary,
+                            paddingVertical: 16,
+                            borderRadius: 12,
+                            alignItems: "center",
+                            opacity: acceptJobMutation.isPending ? 0.7 : 1,
+                        }}
+                    >
+                        {acceptJobMutation.isPending ? <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Memproses...</Text> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Ambil Job</Text>}
+                    </TouchableOpacity>
+                )}
+
                 {pickup.status === "assigned" && (
                     <TouchableOpacity
                         onPress={handleStartPickup}
@@ -196,18 +267,26 @@ export default function CollectorJobDetailScreen() {
                 )}
 
                 {pickup.status === "en_route" && (
-                    <TouchableOpacity
-                        onPress={handleCompletePickup}
-                        disabled={updateStatusMutation.isPending}
-                        style={{
-                            backgroundColor: COLORS.success,
-                            paddingVertical: 16,
-                            borderRadius: 12,
-                            alignItems: "center",
-                        }}
-                    >
-                        <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Pickup Selesai</Text>
-                    </TouchableOpacity>
+                    <View>
+                        {!payment && (
+                            <View style={{ marginBottom: 12, padding: 12, backgroundColor: COLORS.warning + "20", borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
+                                <Ionicons name="alert-circle" size={20} color={COLORS.warning} />
+                                <Text style={{ marginLeft: 8, color: COLORS.warning, fontWeight: "500", fontSize: 14 }}>Menunggu Pembayaran User</Text>
+                            </View>
+                        )}
+                        <TouchableOpacity
+                            onPress={handleCompletePickup}
+                            disabled={updateStatusMutation.isPending || !payment}
+                            style={{
+                                backgroundColor: !payment ? COLORS.textSecondary : COLORS.success,
+                                paddingVertical: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                            }}
+                        >
+                            <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Pickup Selesai</Text>
+                        </TouchableOpacity>
+                    </View>
                 )}
             </View>
         </ScrollView>

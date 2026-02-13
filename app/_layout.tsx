@@ -1,6 +1,7 @@
 import "@/global.css";
 import { useAuth } from "@/providers/AuthProvider";
 import { Providers } from "@/providers/Providers";
+import { COLORS } from "@/utils/constants";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -37,7 +38,7 @@ function RootLayoutNav() {
                 if (role === "collector") {
                     router.replace("/(collector)/(tabs)/dashboard");
                 } else if (role === "waste_bank_staff") {
-                    router.replace("/(waste-bank)/scan");
+                    router.replace("/(waste-bank)/(tabs)" as any);
                 } else {
                     router.replace("/(app)/(tabs)/home");
                 }
@@ -55,7 +56,7 @@ function RootLayoutNav() {
 
     return (
         <>
-            <StatusBar style="auto" />
+            <StatusBar style="dark" backgroundColor={COLORS.primary} translucent={false} />
             <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(auth)" />
                 <Stack.Screen name="(app)" />

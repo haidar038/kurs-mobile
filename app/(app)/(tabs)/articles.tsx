@@ -3,11 +3,13 @@ import type { Article } from "@/types/database";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ArticlesScreen() {
+    const router = useRouter();
     const {
         data: articles,
         isLoading,
@@ -23,7 +25,12 @@ export default function ArticlesScreen() {
 
     const renderItem = ({ item }: { item: Article }) => (
         <TouchableOpacity
-            onPress={() => {}}
+            onPress={() =>
+                router.push({
+                    pathname: "/(app)/article/[id]",
+                    params: { id: item.id },
+                })
+            }
             style={{
                 backgroundColor: COLORS.surface,
                 borderRadius: 16,
@@ -59,7 +66,11 @@ export default function ArticlesScreen() {
                     }}
                     numberOfLines={2}
                 >
-                    {item.content.substring(0, 120)}...
+                    {item.content
+                        .replace(/<[^>]*>/g, "")
+                        .replace(/[#*_>]/g, "")
+                        .substring(0, 120)}
+                    ...
                 </Text>
                 <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 12 }}>
                     {new Date(item.created_at ?? "").toLocaleDateString("id-ID", {

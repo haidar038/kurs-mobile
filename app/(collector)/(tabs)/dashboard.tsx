@@ -9,14 +9,15 @@ import { Linking, RefreshControl, ScrollView, Text, TouchableOpacity, View } fro
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CollectorDashboard() {
-    const { switchRole, profile, user } = useAuth();
+    // const { switchRole, profile, user } = useAuth();
+    const { profile, user } = useAuth();
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const handleSwitchToUser = () => {
-        switchRole("user");
-        router.replace("/(tabs)/home" as any);
-    };
+    // const handleSwitchToUser = () => {
+    //     switchRole("user");
+    //     router.replace("/(tabs)/home" as any);
+    // };
 
     // First, get the collector record for this user
     const { data: collector } = useQuery({
@@ -182,7 +183,7 @@ export default function CollectorDashboard() {
                         <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Halo, Mitra!</Text>
                         <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>{profile?.full_name}</Text>
                     </View>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={handleSwitchToUser}
                         style={{
                             flexDirection: "row",
@@ -196,7 +197,7 @@ export default function CollectorDashboard() {
                     >
                         <Ionicons name="person-outline" size={20} color={COLORS.primary} />
                         <Text style={{ marginLeft: 8, color: COLORS.primary, fontWeight: "600", fontFamily: "GoogleSans-Medium" }}>Mode User</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 {/* Active Jobs Section (Horizontal if multiple, or just list) */}

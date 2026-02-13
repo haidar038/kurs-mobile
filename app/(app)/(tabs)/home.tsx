@@ -111,7 +111,7 @@ export default function HomeScreen() {
 
                         {/* Find Facilities */}
                         <TouchableOpacity
-                            onPress={() => {}}
+                            onPress={() => router.push("/(app)/facilities/map")}
                             style={{
                                 flex: 1,
                                 backgroundColor: COLORS.surface,

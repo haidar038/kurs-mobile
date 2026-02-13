@@ -1,9 +1,11 @@
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
-import { COLORS } from "@/utils/constants";
+import type { PickupRequest } from "@/types/database";
+import { COLORS, WASTE_TYPES } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CollectorEarningsScreen() {
     const { user } = useAuth();
@@ -29,100 +31,150 @@ export default function CollectorEarningsScreen() {
         queryFn: async () => {
             const { data, error } = await supabase.from("pickup_requests").select("*").eq("collector_id", collector!.id).eq("status", "completed").order("updated_at", { ascending: false });
             if (error) throw error;
-            return data;
+            return data as PickupRequest[];
         },
         enabled: !!collector?.id,
     });
 
     const totalEarnings = completedPickups?.reduce((sum, p) => sum + (p.fee ?? 0), 0) || 0;
     const todayDate = new Date().toDateString();
-    const todayEarnings = completedPickups?.filter((p) => new Date(p.updated_at ?? "").toDateString() === todayDate)?.reduce((sum, p) => sum + (p.fee ?? 0), 0) || 0;
+    const todayPickups = completedPickups?.filter((p) => new Date(p.updated_at ?? "").toDateString() === todayDate) || [];
+    const todayEarnings = todayPickups.reduce((sum, p) => sum + (p.fee ?? 0), 0) || 0;
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: COLORS.background }} contentContainerStyle={{ padding: 16 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
-            {/* Summary Cards */}
-            <View style={{ flexDirection: "row", gap: 12, marginBottom: 20 }}>
-                <View
-                    style={{
-                        flex: 1,
-                        backgroundColor: COLORS.primary,
-                        borderRadius: 16,
-                        padding: 20,
-                    }}
-                >
-                    <Ionicons name="today" size={24} color="white" />
-                    <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 8, fontSize: 12 }}>Hari Ini</Text>
-                    <Text style={{ color: "white", fontSize: 22, fontWeight: "bold", marginTop: 4 }}>Rp {todayEarnings.toLocaleString("id-ID")}</Text>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 24, paddingBottom: 100 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
+                {/* Header */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Pendapatan Saya</Text>
+                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular", marginTop: 4 }}>Pantau hasil kerja kerasmu hari ini</Text>
                 </View>
-                <View
-                    style={{
-                        flex: 1,
-                        backgroundColor: COLORS.success,
-                        borderRadius: 16,
-                        padding: 20,
-                    }}
-                >
-                    <Ionicons name="wallet" size={24} color="white" />
-                    <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 8, fontSize: 12 }}>Total</Text>
-                    <Text style={{ color: "white", fontSize: 22, fontWeight: "bold", marginTop: 4 }}>Rp {totalEarnings.toLocaleString("id-ID")}</Text>
-                </View>
-            </View>
 
-            {/* Stats */}
-            <View
-                style={{
-                    backgroundColor: COLORS.surface,
-                    borderRadius: 16,
-                    padding: 20,
-                    marginBottom: 20,
-                }}
-            >
-                <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text }}>Statistik</Text>
-                <View style={{ flexDirection: "row", marginTop: 16 }}>
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                        <Text style={{ fontSize: 28, fontWeight: "bold", color: COLORS.primary }}>{completedPickups?.length || 0}</Text>
-                        <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>Pickup Selesai</Text>
-                    </View>
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                        <Text style={{ fontSize: 28, fontWeight: "bold", color: COLORS.secondary }}>{completedPickups?.filter((p) => new Date(p.updated_at ?? "").toDateString() === todayDate).length || 0}</Text>
-                        <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>Pickup Hari Ini</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* History */}
-            <View
-                style={{
-                    backgroundColor: COLORS.surface,
-                    borderRadius: 16,
-                    padding: 20,
-                }}
-            >
-                <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text }}>Riwayat Pendapatan</Text>
-                {completedPickups && completedPickups.length > 0 ? (
-                    completedPickups.slice(0, 10).map((pickup) => (
-                        <View
-                            key={pickup.id}
-                            style={{
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                paddingVertical: 12,
-                                borderBottomWidth: 1,
-                                borderBottomColor: COLORS.border,
-                            }}
-                        >
-                            <View>
-                                <Text style={{ fontSize: 14, color: COLORS.text }}>{pickup.waste_types.join(", ")}</Text>
-                                <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>{new Date(pickup.updated_at ?? "").toLocaleString("id-ID")}</Text>
-                            </View>
-                            <Text style={{ fontSize: 16, fontWeight: "600", color: COLORS.success }}>+Rp {(pickup.fee ?? 0).toLocaleString("id-ID")}</Text>
+                {/* Summary Cards */}
+                <View style={{ flexDirection: "row", gap: 16, marginBottom: 24 }}>
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: COLORS.primary,
+                            borderRadius: 20,
+                            padding: 20,
+                            elevation: 4,
+                            shadowColor: COLORS.primary,
+                            shadowOffset: { width: 0, height: 4 },
+                            shadowOpacity: 0.2,
+                            shadowRadius: 8,
+                        }}
+                    >
+                        <View style={{ backgroundColor: "rgba(255,255,255,0.2)", alignSelf: "flex-start", padding: 8, borderRadius: 12 }}>
+                            <Ionicons name="today" size={20} color="white" />
                         </View>
-                    ))
-                ) : (
-                    <Text style={{ color: COLORS.textSecondary, marginTop: 12 }}>Belum ada riwayat pendapatan</Text>
-                )}
-            </View>
-        </ScrollView>
+                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "GoogleSans-Medium" }}>Hari Ini</Text>
+                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "GoogleSans-Bold" }}>Rp {todayEarnings.toLocaleString("id-ID")}</Text>
+                    </View>
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: COLORS.success,
+                            borderRadius: 20,
+                            padding: 20,
+                            elevation: 4,
+                            shadowColor: COLORS.success,
+                            shadowOffset: { width: 0, height: 4 },
+                            shadowOpacity: 0.2,
+                            shadowRadius: 8,
+                        }}
+                    >
+                        <View style={{ backgroundColor: "rgba(255,255,255,0.2)", alignSelf: "flex-start", padding: 8, borderRadius: 12 }}>
+                            <Ionicons name="wallet" size={20} color="white" />
+                        </View>
+                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "GoogleSans-Medium" }}>Total</Text>
+                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "GoogleSans-Bold" }}>Rp {totalEarnings.toLocaleString("id-ID")}</Text>
+                    </View>
+                </View>
+
+                {/* Statistics Card */}
+                <View
+                    style={{
+                        backgroundColor: COLORS.surface,
+                        borderRadius: 20,
+                        padding: 24,
+                        marginBottom: 24,
+                        borderWidth: 1,
+                        borderColor: COLORS.border,
+                    }}
+                >
+                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold", marginBottom: 20 }}>Statistik Pickup</Text>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ alignItems: "center", flex: 1 }}>
+                            <View style={{ backgroundColor: COLORS.primary + "10", padding: 12, borderRadius: 50, marginBottom: 8 }}>
+                                <Ionicons name="checkmark-done" size={24} color={COLORS.primary} />
+                            </View>
+                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>{completedPickups?.length || 0}</Text>
+                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Total Selesai</Text>
+                        </View>
+                        <View style={{ width: 1, backgroundColor: COLORS.border, height: "100%" }} />
+                        <View style={{ alignItems: "center", flex: 1 }}>
+                            <View style={{ backgroundColor: COLORS.secondary + "10", padding: 12, borderRadius: 50, marginBottom: 8 }}>
+                                <Ionicons name="calendar" size={24} color={COLORS.secondary} />
+                            </View>
+                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>{todayPickups.length}</Text>
+                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Hari Ini</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Recent History Section */}
+                <View>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 16, fontFamily: "GoogleSans-Bold" }}>Riwayat Pendapatan</Text>
+                    {completedPickups && completedPickups.length > 0 ? (
+                        <View style={{ backgroundColor: COLORS.surface, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, overflow: "hidden" }}>
+                            {completedPickups.slice(0, 20).map((pickup, index) => (
+                                <View
+                                    key={pickup.id}
+                                    style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        padding: 16,
+                                        borderBottomWidth: index === completedPickups.length - 1 ? 0 : 1,
+                                        borderBottomColor: COLORS.border,
+                                    }}
+                                >
+                                    <View style={{ flex: 1 }}>
+                                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                                            {pickup.waste_types.slice(0, 3).map((typeId) => {
+                                                const wasteType = WASTE_TYPES.find((t) => t.id === typeId);
+                                                return (
+                                                    <Text key={typeId} style={{ fontSize: 14 }}>
+                                                        {wasteType?.icon || "♻️"}
+                                                    </Text>
+                                                );
+                                            })}
+                                            <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, fontFamily: "GoogleSans-Medium" }} numberOfLines={1}>
+                                                {pickup.waste_types.map((tid) => WASTE_TYPES.find((t) => t.id === tid)?.label).join(", ")}
+                                            </Text>
+                                        </View>
+                                        <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>
+                                            {new Date(pickup.updated_at ?? "").toLocaleString("id-ID", {
+                                                day: "2-digit",
+                                                month: "short",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                        </Text>
+                                    </View>
+                                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.success, fontFamily: "GoogleSans-Bold" }}>+Rp {(pickup.fee ?? 0).toLocaleString("id-ID")}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={{ alignItems: "center", padding: 40, backgroundColor: COLORS.surface, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border }}>
+                            <Ionicons name="receipt-outline" size={48} color={COLORS.textSecondary} />
+                            <Text style={{ color: COLORS.textSecondary, marginTop: 12, fontFamily: "GoogleSans-Regular" }}>Belum ada riwayat pendapatan</Text>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }

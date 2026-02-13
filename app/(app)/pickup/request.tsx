@@ -9,6 +9,7 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PickupRequestScreen() {
     const router = useRouter();
@@ -203,266 +204,268 @@ export default function PickupRequestScreen() {
     };
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: COLORS.background }} contentContainerStyle={{ padding: 20 }}>
-            {/* Location */}
-            <View style={{ marginBottom: 24 }}>
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontWeight: "600",
-                        color: COLORS.text,
-                        marginBottom: 8,
-                    }}
-                >
-                    Alamat Pickup
-                </Text>
-                <View
-                    style={{
-                        backgroundColor: COLORS.surface,
-                        borderRadius: 12,
-                        borderWidth: 1,
-                        borderColor: COLORS.border,
-                        padding: 16,
-                        flexDirection: "row",
-                        alignItems: "center",
-                    }}
-                >
-                    <Ionicons name="location" size={20} color={COLORS.primary} />
-                    {isLoadingLocation ? (
-                        <ActivityIndicator style={{ marginLeft: 12 }} />
-                    ) : (
-                        <TextInput
-                            style={{
-                                flex: 1,
-                                marginLeft: 12,
-                                fontSize: 14,
-                                color: COLORS.text,
-                            }}
-                            value={pickupDraft.address}
-                            onChangeText={(text) => updatePickupDraft({ address: text })}
-                            placeholder="Alamat pickup..."
-                            multiline
-                        />
-                    )}
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
+                {/* Location */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: COLORS.text,
+                            marginBottom: 8,
+                        }}
+                    >
+                        Alamat Pickup
+                    </Text>
+                    <View
+                        style={{
+                            backgroundColor: COLORS.surface,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: COLORS.border,
+                            padding: 16,
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Ionicons name="location" size={20} color={COLORS.primary} />
+                        {isLoadingLocation ? (
+                            <ActivityIndicator style={{ marginLeft: 12 }} />
+                        ) : (
+                            <TextInput
+                                style={{
+                                    flex: 1,
+                                    marginLeft: 12,
+                                    fontSize: 14,
+                                    color: COLORS.text,
+                                }}
+                                value={pickupDraft.address}
+                                onChangeText={(text) => updatePickupDraft({ address: text })}
+                                placeholder="Alamat pickup..."
+                                multiline
+                            />
+                        )}
+                    </View>
+
+                    {/* Map picker button */}
+                    <TouchableOpacity
+                        onPress={() => setShowMapPicker(true)}
+                        style={{
+                            marginTop: 8,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            alignSelf: "flex-start",
+                            paddingHorizontal: 14,
+                            paddingVertical: 8,
+                            borderRadius: 20,
+                            backgroundColor: COLORS.primary + "15",
+                        }}
+                    >
+                        <Ionicons name="map" size={16} color={COLORS.primary} />
+                        <Text style={{ marginLeft: 6, color: COLORS.primary, fontSize: 13, fontWeight: "600" }}>Pilih di Peta</Text>
+                    </TouchableOpacity>
                 </View>
 
-                {/* Map picker button */}
-                <TouchableOpacity
-                    onPress={() => setShowMapPicker(true)}
-                    style={{
-                        marginTop: 8,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        alignSelf: "flex-start",
-                        paddingHorizontal: 14,
-                        paddingVertical: 8,
-                        borderRadius: 20,
-                        backgroundColor: COLORS.primary + "15",
-                    }}
-                >
-                    <Ionicons name="map" size={16} color={COLORS.primary} />
-                    <Text style={{ marginLeft: 6, color: COLORS.primary, fontSize: 13, fontWeight: "600" }}>Pilih di Peta</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Photos */}
-            <View style={{ marginBottom: 24 }}>
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontWeight: "600",
-                        color: COLORS.text,
-                        marginBottom: 8,
-                    }}
-                >
-                    Foto Sampah ({pickupDraft.photos.length}/5)
-                </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
-                    {pickupDraft.photos.map((uri, index) => (
-                        <View key={index} style={{ position: "relative" }}>
-                            <Image source={{ uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
-                            <TouchableOpacity
-                                onPress={() => removePhoto(index)}
-                                style={{
-                                    position: "absolute",
-                                    top: -8,
-                                    right: -8,
-                                    backgroundColor: COLORS.error,
-                                    borderRadius: 12,
-                                    padding: 4,
-                                }}
-                            >
-                                <Ionicons name="close" size={14} color="white" />
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                    {pickupDraft.photos.length < 5 && (
-                        <View style={{ flexDirection: "row", gap: 8 }}>
-                            <TouchableOpacity
-                                onPress={pickImage}
-                                style={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: 8,
-                                    borderWidth: 2,
-                                    borderColor: COLORS.border,
-                                    borderStyle: "dashed",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                <Ionicons name="images" size={24} color={COLORS.textSecondary} />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={takePhoto}
-                                style={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: 8,
-                                    borderWidth: 2,
-                                    borderColor: COLORS.border,
-                                    borderStyle: "dashed",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                <Ionicons name="camera" size={24} color={COLORS.textSecondary} />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </View>
-            </View>
-
-            {/* Waste Types */}
-            <View style={{ marginBottom: 24 }}>
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontWeight: "600",
-                        color: COLORS.text,
-                        marginBottom: 8,
-                    }}
-                >
-                    Jenis Sampah
-                </Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-                    {WASTE_TYPES.map((type) => {
-                        const isSelected = pickupDraft.wasteTypes.includes(type.id);
-                        return (
-                            <TouchableOpacity
-                                key={type.id}
-                                onPress={() => toggleWasteType(type.id)}
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    paddingHorizontal: 14,
-                                    paddingVertical: 10,
-                                    borderRadius: 20,
-                                    backgroundColor: isSelected ? COLORS.primary : COLORS.surface,
-                                    borderWidth: 1,
-                                    borderColor: isSelected ? COLORS.primary : COLORS.border,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16, marginRight: 6 }}>{type.icon}</Text>
-                                <Text
+                {/* Photos */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: COLORS.text,
+                            marginBottom: 8,
+                        }}
+                    >
+                        Foto Sampah ({pickupDraft.photos.length}/5)
+                    </Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+                        {pickupDraft.photos.map((uri, index) => (
+                            <View key={index} style={{ position: "relative" }}>
+                                <Image source={{ uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
+                                <TouchableOpacity
+                                    onPress={() => removePhoto(index)}
                                     style={{
-                                        fontSize: 14,
-                                        color: isSelected ? "white" : COLORS.text,
-                                        fontWeight: isSelected ? "600" : "400",
+                                        position: "absolute",
+                                        top: -8,
+                                        right: -8,
+                                        backgroundColor: COLORS.error,
+                                        borderRadius: 12,
+                                        padding: 4,
                                     }}
                                 >
-                                    {type.label}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
+                                    <Ionicons name="close" size={14} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                        {pickupDraft.photos.length < 5 && (
+                            <View style={{ flexDirection: "row", gap: 8 }}>
+                                <TouchableOpacity
+                                    onPress={pickImage}
+                                    style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: 8,
+                                        borderWidth: 2,
+                                        borderColor: COLORS.border,
+                                        borderStyle: "dashed",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Ionicons name="images" size={24} color={COLORS.textSecondary} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={takePhoto}
+                                    style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: 8,
+                                        borderWidth: 2,
+                                        borderColor: COLORS.border,
+                                        borderStyle: "dashed",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Ionicons name="camera" size={24} color={COLORS.textSecondary} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                 </View>
-            </View>
 
-            {/* Notes */}
-            <View style={{ marginBottom: 24 }}>
-                <Text
+                {/* Waste Types */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: COLORS.text,
+                            marginBottom: 8,
+                        }}
+                    >
+                        Jenis Sampah
+                    </Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                        {WASTE_TYPES.map((type) => {
+                            const isSelected = pickupDraft.wasteTypes.includes(type.id);
+                            return (
+                                <TouchableOpacity
+                                    key={type.id}
+                                    onPress={() => toggleWasteType(type.id)}
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        paddingHorizontal: 14,
+                                        paddingVertical: 10,
+                                        borderRadius: 20,
+                                        backgroundColor: isSelected ? COLORS.primary : COLORS.surface,
+                                        borderWidth: 1,
+                                        borderColor: isSelected ? COLORS.primary : COLORS.border,
+                                    }}
+                                >
+                                    <Text style={{ fontSize: 16, marginRight: 6 }}>{type.icon}</Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 14,
+                                            color: isSelected ? "white" : COLORS.text,
+                                            fontWeight: isSelected ? "600" : "400",
+                                        }}
+                                    >
+                                        {type.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                </View>
+
+                {/* Notes */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            fontWeight: "600",
+                            color: COLORS.text,
+                            marginBottom: 8,
+                        }}
+                    >
+                        Catatan (opsional)
+                    </Text>
+                    <TextInput
+                        style={{
+                            backgroundColor: COLORS.surface,
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: COLORS.border,
+                            padding: 16,
+                            fontSize: 14,
+                            minHeight: 80,
+                            textAlignVertical: "top",
+                        }}
+                        value={pickupDraft.notes}
+                        onChangeText={(text) => updatePickupDraft({ notes: text })}
+                        placeholder="Tambahkan catatan..."
+                        multiline
+                    />
+                </View>
+
+                {/* Fee */}
+                <View
                     style={{
-                        fontSize: 14,
-                        fontWeight: "600",
-                        color: COLORS.text,
-                        marginBottom: 8,
-                    }}
-                >
-                    Catatan (opsional)
-                </Text>
-                <TextInput
-                    style={{
-                        backgroundColor: COLORS.surface,
-                        borderRadius: 12,
-                        borderWidth: 1,
-                        borderColor: COLORS.border,
+                        backgroundColor: COLORS.primary + "10",
                         padding: 16,
-                        fontSize: 14,
-                        minHeight: 80,
-                        textAlignVertical: "top",
-                    }}
-                    value={pickupDraft.notes}
-                    onChangeText={(text) => updatePickupDraft({ notes: text })}
-                    placeholder="Tambahkan catatan..."
-                    multiline
-                />
-            </View>
-
-            {/* Fee */}
-            <View
-                style={{
-                    backgroundColor: COLORS.primary + "10",
-                    padding: 16,
-                    borderRadius: 12,
-                    marginBottom: 24,
-                }}
-            >
-                <Text style={{ fontSize: 14, color: COLORS.textSecondary }}>Biaya Pickup</Text>
-                <Text
-                    style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        color: COLORS.primary,
-                        marginTop: 4,
+                        borderRadius: 12,
+                        marginBottom: 24,
                     }}
                 >
-                    Rp {MINIMUM_FEE.toLocaleString("id-ID")}
-                </Text>
-                <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 4 }}>*Biaya minimum, dapat berubah sesuai volume</Text>
-            </View>
+                    <Text style={{ fontSize: 14, color: COLORS.textSecondary }}>Biaya Pickup</Text>
+                    <Text
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            color: COLORS.primary,
+                            marginTop: 4,
+                        }}
+                    >
+                        Rp {MINIMUM_FEE.toLocaleString("id-ID")}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 4 }}>*Biaya minimum, dapat berubah sesuai volume</Text>
+                </View>
 
-            {/* Submit */}
-            <TouchableOpacity
-                onPress={handleSubmit}
-                disabled={isLoading}
-                style={{
-                    backgroundColor: COLORS.primary,
-                    paddingVertical: 16,
-                    borderRadius: 12,
-                    alignItems: "center",
-                    opacity: isLoading ? 0.7 : 1,
-                }}
-            >
-                {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kirim Permintaan</Text>}
-            </TouchableOpacity>
+                {/* Submit */}
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    disabled={isLoading}
+                    style={{
+                        backgroundColor: COLORS.primary,
+                        paddingVertical: 16,
+                        borderRadius: 12,
+                        alignItems: "center",
+                        opacity: isLoading ? 0.7 : 1,
+                    }}
+                >
+                    {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kirim Permintaan</Text>}
+                </TouchableOpacity>
 
-            {/* Location Picker Modal */}
-            <LocationPickerModal
-                visible={showMapPicker}
-                initialLatitude={currentLocation?.latitude}
-                initialLongitude={currentLocation?.longitude}
-                onClose={() => setShowMapPicker(false)}
-                onConfirm={(loc) => {
-                    setCurrentLocation({
-                        latitude: loc.latitude,
-                        longitude: loc.longitude,
-                        address: loc.address,
-                    });
-                    updatePickupDraft({ address: loc.address });
-                    setShowMapPicker(false);
-                }}
-            />
-        </ScrollView>
+                {/* Location Picker Modal */}
+                <LocationPickerModal
+                    visible={showMapPicker}
+                    initialLatitude={currentLocation?.latitude}
+                    initialLongitude={currentLocation?.longitude}
+                    onClose={() => setShowMapPicker(false)}
+                    onConfirm={(loc) => {
+                        setCurrentLocation({
+                            latitude: loc.latitude,
+                            longitude: loc.longitude,
+                            address: loc.address,
+                        });
+                        updatePickupDraft({ address: loc.address });
+                        setShowMapPicker(false);
+                    }}
+                />
+            </ScrollView>
+        </SafeAreaView>
     );
 }
