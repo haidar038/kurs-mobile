@@ -34,19 +34,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [desiredRole, setDesiredRole] = useState<UserRole | null>(null);
 
     const fetchProfile = useCallback(async (userId: string) => {
-        const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+        try {
+            const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
 
-        if (!error && data) {
+            if (error || !data) {
+                console.error("Error fetching profile:", error);
+                return null;
+            }
+
             setProfile(data);
 
             // Fetch Multiple Roles from user_roles table
             const { data: rolesData } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-            const userRoles = (rolesData?.map((r) => r.role) as UserRole[]) || [data.role || "user"];
+            // Safe access to data.role
+            const defaultRole = data.role || "user";
+            const userRoles = (rolesData?.map((r) => r.role) as UserRole[]) || [defaultRole];
             setRoles(userRoles);
 
             // Default desiredRole
             setDesiredRole((prev: UserRole | null) => {
-                if (!prev) return (data.role as UserRole) || "user";
+                if (!prev) return defaultRole as UserRole;
                 return prev;
             });
 
@@ -55,21 +62,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const { data: collectorData } = await supabase.from("collectors").select("*").eq("user_id", userId).single();
                 setCollector(collectorData);
             }
+            return data;
+        } catch (error) {
+            console.error("Unexpected error in fetchProfile:", error);
+            return null;
         }
-        return data;
     }, []);
 
     useEffect(() => {
+        let mounted = true;
+
         // Get initial session
         const initSession = async () => {
-            const {
-                data: { session },
-            } = await supabase.auth.getSession();
-            setSession(session);
-            if (session?.user) {
-                await fetchProfile(session.user.id);
+            try {
+                const {
+                    data: { session },
+                    error,
+                } = await supabase.auth.getSession();
+
+                if (error) console.error("Error getting session:", error);
+
+                if (mounted) {
+                    if (session?.user) {
+                        const profileData = await fetchProfile(session.user.id);
+                        if (!profileData) {
+                            console.error("Profile not found or fetch failed. Clearing session.");
+                            setSession(null);
+                            // Optionally call signOut to clean up Supabase state if possible,
+                            // but setSession(null) is enough to unblock UI.
+                            await supabase.auth.signOut().catch(console.error);
+                        } else {
+                            setSession(session);
+                        }
+                    } else {
+                        setSession(session);
+                    }
+                }
+            } catch (error) {
+                console.error("Critical error in initSession:", error);
+            } finally {
+                if (mounted) setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
         initSession();
@@ -78,18 +111,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            setSession(session);
+            if (!mounted) return;
+
             if (session?.user) {
-                await fetchProfile(session.user.id);
+                // Optimistically set session to avoid flash
+                setSession(session);
+                const profileData = await fetchProfile(session.user.id);
+                if (!profileData) {
+                    console.error("Profile load failed on auth change. Logging out.");
+                    setSession(null);
+                    setProfile(null);
+                    setCollector(null);
+                    setDesiredRole(null);
+                    setRoles([]);
+                    await supabase.auth.signOut().catch(console.error);
+                }
             } else {
+                setSession(session);
                 setProfile(null);
                 setCollector(null);
                 setDesiredRole(null);
+                setRoles([]);
             }
             setIsLoading(false);
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            subscription.unsubscribe();
+        };
     }, [fetchProfile]);
 
     const signIn = async (email: string, password: string) => {
@@ -132,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const {
                 data: { user: currentUser },
             } = await supabase.auth.getUser();
-            const userId = currentUser?.id;
+            const userId = currentUser?.id ?? session?.user?.id;
 
             // Log for debugging (visible to user in console)
             console.log("Signing out user:", userId);
@@ -141,8 +191,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // If it's a collector (check both profile role and collector state)
                 const isCollector = profile?.role === "collector" || collector !== null;
                 if (isCollector) {
-                    await supabase.from("collectors").update({ status: "offline" }).eq("user_id", userId);
-                    console.log("Set collector status to offline for:", userId);
+                    try {
+                        await supabase.from("collectors").update({ status: "offline" }).eq("user_id", userId);
+                        console.log("Set collector status to offline for:", userId);
+                    } catch (e) {
+                        console.warn("Failed to set offline status:", e);
+                    }
                 }
             }
 
@@ -158,10 +212,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (redirectPath) {
                 router.replace(redirectPath as any);
             } else {
-                router.replace("/(auth)/welcome");
+                router.replace("/(auth)/login");
             }
         } catch (error) {
             console.error("Error during signOut:", error);
+            // Force safe state even if error
+            setSession(null);
+            setProfile(null);
+            router.replace("/(auth)/login");
         } finally {
             setIsLoading(false);
         }
