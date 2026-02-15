@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import type { Collector, Profile } from "@/types/database";
 import { Session, User } from "@supabase/supabase-js";
 import { router } from "expo-router";
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type UserRole = NonNullable<Profile["role"]>;
 
@@ -32,6 +32,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [roles, setRoles] = useState<UserRole[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [desiredRole, setDesiredRole] = useState<UserRole | null>(null);
+    const profileRef = useRef<Profile | null>(null);
+
+    // Keep profileRef in sync
+    useEffect(() => {
+        profileRef.current = profile;
+    }, [profile]);
 
     const fetchProfile = useCallback(async (userId: string) => {
         try {
@@ -110,21 +116,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Listen for auth changes
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log("Auth state change event:", event);
             if (!mounted) return;
 
             if (session?.user) {
                 // Optimistically set session to avoid flash
                 setSession(session);
-                const profileData = await fetchProfile(session.user.id);
-                if (!profileData) {
-                    console.error("Profile load failed on auth change. Logging out.");
-                    setSession(null);
-                    setProfile(null);
-                    setCollector(null);
-                    setDesiredRole(null);
-                    setRoles([]);
-                    await supabase.auth.signOut().catch(console.error);
+
+                // If we already have a profile and the event is just a USER_UPDATED (like push token update),
+                // we might not need to fetch the profile again from the 'profiles' table.
+                if (event === "USER_UPDATED" && profileRef.current) {
+                    console.log("User metadata updated, skipping profile re-fetch.");
+                } else {
+                    const profileData = await fetchProfile(session.user.id);
+                    if (!profileData) {
+                        console.error("Profile load failed on auth change. Logging out.");
+                        setSession(null);
+                        setProfile(null);
+                        setCollector(null);
+                        setDesiredRole(null);
+                        setRoles([]);
+                        await supabase.auth.signOut().catch(console.error);
+                    }
                 }
             } else {
                 setSession(session);

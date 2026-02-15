@@ -82,11 +82,11 @@ export default function RegisterStaffScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
                     <Ionicons name="arrow-back" size={24} color={COLORS.text} />
                 </TouchableOpacity>
-                <Text style={{ fontSize: 20, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Daftar Staff Bank Sampah</Text>
+                <Text style={{ fontSize: 20, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Daftar Staff Bank Sampah</Text>
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 24 }}>
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginBottom: 24, lineHeight: 24, fontFamily: "GoogleSans-Regular" }}>
+                <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginBottom: 24, lineHeight: 24, fontFamily: "PublicSans-Regular" }}>
                     Bergabunglah sebagai Staff Bank Sampah untuk membantu mengelola operasional dan setoran di lingkungan Anda. Silakan pilih Bank Sampah tempat Anda bertugas.
                 </Text>
 
@@ -94,7 +94,7 @@ export default function RegisterStaffScreen() {
                     <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 20 }} />
                 ) : (
                     <View style={{ gap: 16 }}>
-                        <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "GoogleSans-Medium" }}>Pilih Bank Sampah</Text>
+                        <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "PublicSans-Medium" }}>Pilih Bank Sampah</Text>
 
                         {facilities.map((facility) => (
                             <TouchableOpacity
@@ -111,8 +111,8 @@ export default function RegisterStaffScreen() {
                                 }}
                             >
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>{facility.name}</Text>
-                                    <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: 4, fontFamily: "GoogleSans-Regular" }}>{facility.address}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>{facility.name}</Text>
+                                    <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: 4, fontFamily: "PublicSans-Regular" }}>{facility.address}</Text>
                                 </View>
                                 {selectedFacility === facility.id && <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />}
                             </TouchableOpacity>
@@ -130,7 +130,7 @@ export default function RegisterStaffScreen() {
                                 opacity: isLoading || !selectedFacility ? 0.7 : 1,
                             }}
                         >
-                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Kirim Pendaftaran</Text>}
+                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Kirim Pendaftaran</Text>}
                         </TouchableOpacity>
                     </View>
                 )}

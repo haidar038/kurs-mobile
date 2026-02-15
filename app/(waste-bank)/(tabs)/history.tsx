@@ -106,8 +106,8 @@ export default function WasteBankHistoryScreen() {
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
             <View style={{ flex: 1, padding: 24 }}>
                 <View style={{ marginBottom: 24 }}>
-                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Riwayat Deposit</Text>
-                    <Text style={{ fontSize: 15, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular", marginTop: 4 }}>Daftar semua deposit yang telah Anda verifikasi</Text>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Riwayat Deposit</Text>
+                    <Text style={{ fontSize: 15, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular", marginTop: 4 }}>Daftar semua deposit yang telah Anda verifikasi</Text>
                 </View>
 
                 <FlatList

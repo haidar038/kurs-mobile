@@ -46,8 +46,8 @@ export default function CollectorEarningsScreen() {
             <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 24, paddingBottom: 100 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
                 {/* Header */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Pendapatan Saya</Text>
-                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular", marginTop: 4 }}>Pantau hasil kerja kerasmu hari ini</Text>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Pendapatan Saya</Text>
+                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular", marginTop: 4 }}>Pantau hasil kerja kerasmu hari ini</Text>
                 </View>
 
                 {/* Summary Cards */}
@@ -68,8 +68,8 @@ export default function CollectorEarningsScreen() {
                         <View style={{ backgroundColor: "rgba(255,255,255,0.2)", alignSelf: "flex-start", padding: 8, borderRadius: 12 }}>
                             <Ionicons name="today" size={20} color="white" />
                         </View>
-                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "GoogleSans-Medium" }}>Hari Ini</Text>
-                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "GoogleSans-Bold" }}>Rp {todayEarnings.toLocaleString("id-ID")}</Text>
+                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "PublicSans-Medium" }}>Hari Ini</Text>
+                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "PublicSans-Bold" }}>Rp {todayEarnings.toLocaleString("id-ID")}</Text>
                     </View>
                     <View
                         style={{
@@ -87,8 +87,8 @@ export default function CollectorEarningsScreen() {
                         <View style={{ backgroundColor: "rgba(255,255,255,0.2)", alignSelf: "flex-start", padding: 8, borderRadius: 12 }}>
                             <Ionicons name="wallet" size={20} color="white" />
                         </View>
-                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "GoogleSans-Medium" }}>Total</Text>
-                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "GoogleSans-Bold" }}>Rp {totalEarnings.toLocaleString("id-ID")}</Text>
+                        <Text style={{ color: "rgba(255,255,255,0.8)", marginTop: 12, fontSize: 13, fontFamily: "PublicSans-Medium" }}>Total</Text>
+                        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", marginTop: 4, fontFamily: "PublicSans-Bold" }}>Rp {totalEarnings.toLocaleString("id-ID")}</Text>
                     </View>
                 </View>
 
@@ -103,29 +103,29 @@ export default function CollectorEarningsScreen() {
                         borderColor: COLORS.border,
                     }}
                 >
-                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold", marginBottom: 20 }}>Statistik Pickup</Text>
+                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold", marginBottom: 20 }}>Statistik Pickup</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                         <View style={{ alignItems: "center", flex: 1 }}>
                             <View style={{ backgroundColor: COLORS.primary + "10", padding: 12, borderRadius: 50, marginBottom: 8 }}>
                                 <Ionicons name="checkmark-done" size={24} color={COLORS.primary} />
                             </View>
-                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>{completedPickups?.length || 0}</Text>
-                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Total Selesai</Text>
+                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>{completedPickups?.length || 0}</Text>
+                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Total Selesai</Text>
                         </View>
                         <View style={{ width: 1, backgroundColor: COLORS.border, height: "100%" }} />
                         <View style={{ alignItems: "center", flex: 1 }}>
                             <View style={{ backgroundColor: COLORS.secondary + "10", padding: 12, borderRadius: 50, marginBottom: 8 }}>
                                 <Ionicons name="calendar" size={24} color={COLORS.secondary} />
                             </View>
-                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>{todayPickups.length}</Text>
-                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Hari Ini</Text>
+                            <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>{todayPickups.length}</Text>
+                            <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Hari Ini</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Recent History Section */}
                 <View>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 16, fontFamily: "GoogleSans-Bold" }}>Riwayat Pendapatan</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 16, fontFamily: "PublicSans-Bold" }}>Riwayat Pendapatan</Text>
                     {completedPickups && completedPickups.length > 0 ? (
                         <View style={{ backgroundColor: COLORS.surface, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, overflow: "hidden" }}>
                             {completedPickups.slice(0, 20).map((pickup, index) => (
@@ -150,11 +150,11 @@ export default function CollectorEarningsScreen() {
                                                     </Text>
                                                 );
                                             })}
-                                            <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, fontFamily: "GoogleSans-Medium" }} numberOfLines={1}>
+                                            <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, fontFamily: "PublicSans-Medium" }} numberOfLines={1}>
                                                 {pickup.waste_types.map((tid) => WASTE_TYPES.find((t) => t.id === tid)?.label).join(", ")}
                                             </Text>
                                         </View>
-                                        <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>
+                                        <Text style={{ fontSize: 12, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>
                                             {new Date(pickup.updated_at ?? "").toLocaleString("id-ID", {
                                                 day: "2-digit",
                                                 month: "short",
@@ -163,14 +163,14 @@ export default function CollectorEarningsScreen() {
                                             })}
                                         </Text>
                                     </View>
-                                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.success, fontFamily: "GoogleSans-Bold" }}>+Rp {(pickup.fee ?? 0).toLocaleString("id-ID")}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.success, fontFamily: "PublicSans-Bold" }}>+Rp {(pickup.fee ?? 0).toLocaleString("id-ID")}</Text>
                                 </View>
                             ))}
                         </View>
                     ) : (
                         <View style={{ alignItems: "center", padding: 40, backgroundColor: COLORS.surface, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border }}>
                             <Ionicons name="receipt-outline" size={48} color={COLORS.textSecondary} />
-                            <Text style={{ color: COLORS.textSecondary, marginTop: 12, fontFamily: "GoogleSans-Regular" }}>Belum ada riwayat pendapatan</Text>
+                            <Text style={{ color: COLORS.textSecondary, marginTop: 12, fontFamily: "PublicSans-Regular" }}>Belum ada riwayat pendapatan</Text>
                         </View>
                     )}
                 </View>

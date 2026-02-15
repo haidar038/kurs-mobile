@@ -65,19 +65,47 @@ export async function registerForPushNotifications(userId: string): Promise<stri
     }
 
     // Resolve projectId from app config (required in bare / dev-build workflows)
+    // Resolve projectId from app config (required in bare / dev-build workflows)
     const projectId = Constants.expoConfig?.extra?.eas?.projectId as string | undefined;
 
-    const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: projectId ?? undefined,
-    });
-    const token = tokenData.data;
+    try {
+        console.log("Fetching Expo push token...");
+        // Add a timeout to prevent infinite hanging if native module is stuck
+        const tokenPromise = Notifications.getExpoPushTokenAsync({
+            projectId: projectId ?? undefined,
+        });
 
-    // Save token to user metadata (no extra DB column needed)
-    await supabase.auth.updateUser({
-        data: { push_token: token },
-    });
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Push token fetch timed out")), 5000)
+        );
 
-    return token;
+        const tokenData = await Promise.race([tokenPromise, timeoutPromise]) as Notifications.ExpoPushToken;
+        const token = tokenData.data;
+        console.log("Push token received:", token);
+
+        // Check current token in Supabase to avoid redundant updates
+        const { data: { user } } = await supabase.auth.getUser();
+        const currentToken = user?.user_metadata?.push_token;
+
+        if (currentToken === token) {
+            console.log("Push token already up to date in Supabase.");
+            return token;
+        }
+
+        console.log("Updating push token in Supabase...");
+        // Save token to user metadata (no extra DB column needed)
+        const { error: updateError } = await supabase.auth.updateUser({
+            data: { push_token: token },
+        });
+
+        if (updateError) throw updateError;
+        console.log("Push token successfully updated.");
+
+        return token;
+    } catch (error) {
+        console.warn("Failed to get or save push token:", error);
+        return null;
+    }
 }
 
 /** Types for notification payload within the app */

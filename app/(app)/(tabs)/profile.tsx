@@ -186,7 +186,7 @@ export default function ProfileScreen() {
                             }}
                         >
                             <Ionicons name="bicycle" size={24} color="white" />
-                            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", fontFamily: "GoogleSans-Bold" }}>Masuk Mode Mitra</Text>
+                            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", fontFamily: "PublicSans-Bold" }}>Masuk Mode Mitra</Text>
                         </TouchableOpacity>
                     ) : partnerStatus === "pending" ? (
                         <View
@@ -199,7 +199,7 @@ export default function ProfileScreen() {
                                 borderColor: COLORS.border,
                             }}
                         >
-                            <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Pendaftaran Mitra Sedang Diproses</Text>
+                            <Text style={{ color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Pendaftaran Mitra Sedang Diproses</Text>
                         </View>
                     ) : (
                         <TouchableOpacity
@@ -213,7 +213,7 @@ export default function ProfileScreen() {
                                 borderColor: COLORS.primary,
                             }}
                         >
-                            <Text style={{ color: COLORS.primary, fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar Jadi Mitra</Text>
+                            <Text style={{ color: COLORS.primary, fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Daftar Jadi Mitra</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -237,7 +237,7 @@ export default function ProfileScreen() {
                             }}
                         >
                             <Ionicons name="business" size={24} color="white" />
-                            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", fontFamily: "GoogleSans-Bold" }}>Masuk Mode Staff</Text>
+                            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", fontFamily: "PublicSans-Bold" }}>Masuk Mode Staff</Text>
                         </TouchableOpacity>
                     ) : staffStatus === "pending" ? (
                         <View
@@ -250,7 +250,7 @@ export default function ProfileScreen() {
                                 borderColor: COLORS.border,
                             }}
                         >
-                            <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Pendaftaran Staff Sedang Diproses</Text>
+                            <Text style={{ color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Pendaftaran Staff Sedang Diproses</Text>
                         </View>
                     ) : (
                         <TouchableOpacity
@@ -264,7 +264,7 @@ export default function ProfileScreen() {
                                 borderColor: COLORS.secondary,
                             }}
                         >
-                            <Text style={{ color: COLORS.secondary, fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar Jadi Staff Bank Sampah</Text>
+                            <Text style={{ color: COLORS.secondary, fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Daftar Jadi Staff Bank Sampah</Text>
                         </TouchableOpacity>
                     )}
                 </View>

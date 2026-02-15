@@ -280,8 +280,8 @@ export default function CollectorDashboard() {
                 {/* Header */}
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                     <View>
-                        <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Halo, Mitra!</Text>
-                        <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>{profile?.full_name}</Text>
+                        <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Halo, Mitra!</Text>
+                        <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>{profile?.full_name}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={toggleStatus}
@@ -309,7 +309,7 @@ export default function CollectorDashboard() {
                             style={{
                                 color: isTracking ? "#1E8E3E" : "#C5221F",
                                 fontWeight: "600",
-                                fontFamily: "GoogleSans-Medium",
+                                fontFamily: "PublicSans-Medium",
                             }}
                         >
                             {isTracking ? "Online" : "Offline"}
@@ -330,7 +330,7 @@ export default function CollectorDashboard() {
                 {/* Active Jobs Section (Vertical list for consistency) */}
                 {myJobs && myJobs.length > 0 && (
                     <View style={{ marginBottom: 24 }}>
-                        <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "GoogleSans-Bold" }}>Job Aktif ({myJobs.length})</Text>
+                        <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "PublicSans-Bold" }}>Job Aktif ({myJobs.length})</Text>
                         <View>
                             {myJobs.map((job) => (
                                 <View key={job.id}>{renderJobCard({ item: job, isMyJob: true })}</View>
@@ -341,7 +341,7 @@ export default function CollectorDashboard() {
 
                 {/* Available Jobs Section */}
                 <View>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "GoogleSans-Bold" }}>Job Tersedia</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "PublicSans-Bold" }}>Job Tersedia</Text>
                     {availableJobs?.length === 0 ? (
                         <View style={{ alignItems: "center", padding: 32, backgroundColor: COLORS.surface, borderRadius: 12 }}>
                             <Ionicons name="car-outline" size={48} color={COLORS.textSecondary} />

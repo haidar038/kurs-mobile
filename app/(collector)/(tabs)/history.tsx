@@ -53,7 +53,7 @@ export default function CollectorHistoryScreen() {
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                         <Ionicons name="calendar-outline" size={14} color={COLORS.textSecondary} />
-                        <Text style={{ fontSize: 13, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>
+                        <Text style={{ fontSize: 13, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>
                             {new Date(item.created_at ?? "").toLocaleDateString("id-ID", {
                                 day: "2-digit",
                                 month: "short",
@@ -75,7 +75,7 @@ export default function CollectorHistoryScreen() {
                                 color: isCompleted ? COLORS.success : COLORS.error,
                                 textTransform: "capitalize",
                                 fontWeight: "bold",
-                                fontFamily: "GoogleSans-Bold",
+                                fontFamily: "PublicSans-Bold",
                             }}
                         >
                             {isCompleted ? "Selesai" : "Dibatalkan"}
@@ -94,7 +94,7 @@ export default function CollectorHistoryScreen() {
                                 fontSize: 15,
                                 fontWeight: "600",
                                 color: COLORS.text,
-                                fontFamily: "GoogleSans-Medium",
+                                fontFamily: "PublicSans-Medium",
                                 lineHeight: 22,
                             }}
                             numberOfLines={2}
@@ -129,11 +129,11 @@ export default function CollectorHistoryScreen() {
                                 );
                             })}
                         </View>
-                        <Text style={{ fontSize: 13, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }} numberOfLines={1}>
+                        <Text style={{ fontSize: 13, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }} numberOfLines={1}>
                             {item.waste_types.length} jenis sampah
                         </Text>
                     </View>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.primary, fontFamily: "GoogleSans-Bold" }}>Rp {(item.fee ?? 0).toLocaleString("id-ID")}</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.primary, fontFamily: "PublicSans-Bold" }}>Rp {(item.fee ?? 0).toLocaleString("id-ID")}</Text>
                 </View>
             </View>
         );
@@ -143,8 +143,8 @@ export default function CollectorHistoryScreen() {
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
             <View style={{ flex: 1, padding: 24 }}>
                 <View style={{ marginBottom: 24 }}>
-                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Riwayat Pekerjaan</Text>
-                    <Text style={{ fontSize: 15, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular", marginTop: 4 }}>Daftar semua pekerjaan yang telah kamu selesaikan</Text>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Riwayat Pekerjaan</Text>
+                    <Text style={{ fontSize: 15, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular", marginTop: 4 }}>Daftar semua pekerjaan yang telah kamu selesaikan</Text>
                 </View>
 
                 <FlatList
@@ -159,8 +159,8 @@ export default function CollectorHistoryScreen() {
                             <View style={{ backgroundColor: COLORS.surface, padding: 30, borderRadius: 100, marginBottom: 20 }}>
                                 <Ionicons name="document-text-outline" size={60} color={COLORS.textSecondary} />
                             </View>
-                            <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Belum ada riwayat</Text>
-                            <Text style={{ fontSize: 14, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular", marginTop: 8, textAlign: "center", paddingHorizontal: 40 }}>
+                            <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Belum ada riwayat</Text>
+                            <Text style={{ fontSize: 14, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular", marginTop: 8, textAlign: "center", paddingHorizontal: 40 }}>
                                 Pekerjaan yang selesai atau dibatalkan akan muncul di sini.
                             </Text>
                         </View>

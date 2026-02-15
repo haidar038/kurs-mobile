@@ -168,12 +168,12 @@ export default function LoginScreen() {
                                 fontSize: 32,
                                 fontWeight: "bold",
                                 color: config.color,
-                                fontFamily: "GoogleSans-Bold",
+                                fontFamily: "PublicSans-Bold",
                             }}
                         >
                             {config.title}
                         </Text>
-                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 4, fontFamily: "GoogleSans-Regular" }}>{config.subtitle}</Text>
+                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 4, fontFamily: "PublicSans-Regular" }}>{config.subtitle}</Text>
                     </View>
 
                     {/* Form */}
@@ -185,7 +185,7 @@ export default function LoginScreen() {
                                     fontWeight: "500",
                                     color: COLORS.text,
                                     marginBottom: 8,
-                                    fontFamily: "GoogleSans-Medium",
+                                    fontFamily: "PublicSans-Medium",
                                 }}
                             >
                                 Email
@@ -209,7 +209,7 @@ export default function LoginScreen() {
                                         paddingHorizontal: 12,
                                         paddingVertical: 14,
                                         fontSize: 16,
-                                        fontFamily: "GoogleSans-Regular",
+                                        fontFamily: "PublicSans-Regular",
                                     }}
                                     placeholder="email@example.com"
                                     placeholderTextColor={COLORS.textSecondary}
@@ -229,7 +229,7 @@ export default function LoginScreen() {
                                     fontWeight: "500",
                                     color: COLORS.text,
                                     marginBottom: 8,
-                                    fontFamily: "GoogleSans-Medium",
+                                    fontFamily: "PublicSans-Medium",
                                 }}
                             >
                                 Password
@@ -254,7 +254,7 @@ export default function LoginScreen() {
                                         paddingVertical: 14,
                                         fontSize: 16,
                                         color: COLORS.text,
-                                        fontFamily: "GoogleSans-Regular",
+                                        fontFamily: "PublicSans-Regular",
                                     }}
                                     placeholder="••••••••"
                                     placeholderTextColor={COLORS.textSecondary}
@@ -271,7 +271,7 @@ export default function LoginScreen() {
 
                         <Link href="/(auth)/forgot-password" asChild>
                             <TouchableOpacity style={{ alignSelf: "flex-end" }}>
-                                <Text style={{ color: config.color, fontSize: 14, fontFamily: "GoogleSans-Medium" }}>Lupa password?</Text>
+                                <Text style={{ color: config.color, fontSize: 14, fontFamily: "PublicSans-Medium" }}>Lupa password?</Text>
                             </TouchableOpacity>
                         </Link>
 
@@ -292,7 +292,7 @@ export default function LoginScreen() {
                                 elevation: 4,
                             }}
                         >
-                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Masuk</Text>}
+                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Masuk</Text>}
                         </TouchableOpacity>
                     </View>
 
@@ -306,10 +306,10 @@ export default function LoginScreen() {
                                 gap: 4,
                             }}
                         >
-                            <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Belum punya akun?</Text>
+                            <Text style={{ color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Belum punya akun?</Text>
                             <Link href="/(auth)/register" asChild>
                                 <TouchableOpacity>
-                                    <Text style={{ color: config.color, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar</Text>
+                                    <Text style={{ color: config.color, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Daftar</Text>
                                 </TouchableOpacity>
                             </Link>
                         </View>

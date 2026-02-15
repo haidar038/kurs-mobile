@@ -19,6 +19,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const { user } = useAuth();
     const router = useRouter();
     const responseListener = useRef<Notifications.EventSubscription | null>(null);
+    const isRegistering = useRef(false);
 
     // Initialise notification handler once (no-op in Expo Go)
     useEffect(() => {
@@ -27,9 +28,20 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     // Register push token when user is authenticated
     useEffect(() => {
-        if (user?.id) {
-            registerForPushNotifications(user.id).catch(console.error);
-        }
+        const register = async () => {
+            if (user?.id && !isRegistering.current) {
+                isRegistering.current = true;
+                try {
+                    await registerForPushNotifications(user.id);
+                } catch (err) {
+                    console.error("Error in NotificationProvider registration:", err);
+                } finally {
+                    isRegistering.current = false;
+                }
+            }
+        };
+
+        register();
     }, [user?.id]);
 
     // Listen for notification taps (skip in Expo Go)

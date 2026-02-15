@@ -72,8 +72,8 @@ export default function WasteBankDashboard() {
             <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 100 }} refreshControl={<RefreshControl refreshing={isLoadingDeposits} onRefresh={onRefresh} />}>
                 {/* Header */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Halo, Staff!</Text>
-                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>{profile?.full_name}</Text>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Halo, Staff!</Text>
+                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>{profile?.full_name}</Text>
                 </View>
 
                 {/* Quick Stats */}
@@ -100,7 +100,7 @@ export default function WasteBankDashboard() {
 
                 {/* Quick Actions */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "GoogleSans-Bold" }}>Menu Cepat</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "PublicSans-Bold" }}>Menu Cepat</Text>
                     <View style={{ flexDirection: "row", gap: 12 }}>
                         <TouchableOpacity
                             onPress={() => router.push("/(waste-bank)/scan")}
@@ -144,7 +144,7 @@ export default function WasteBankDashboard() {
                 {/* Recent Activity */}
                 <View>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                        <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Deposit Terkini</Text>
+                        <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Deposit Terkini</Text>
                         <Link href="/(waste-bank)/(tabs)/history" asChild>
                             <TouchableOpacity>
                                 <Text style={{ color: COLORS.primary, fontSize: 14, fontWeight: "600" }}>Lihat Semua</Text>

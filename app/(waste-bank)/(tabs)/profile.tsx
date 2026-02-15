@@ -85,7 +85,7 @@ export default function WasteBankProfileScreen() {
                             fontWeight: "bold",
                             color: COLORS.text,
                             marginTop: 16,
-                            fontFamily: "GoogleSans-Bold",
+                            fontFamily: "PublicSans-Bold",
                         }}
                     >
                         {profile?.full_name || "Nama Pengguna"}

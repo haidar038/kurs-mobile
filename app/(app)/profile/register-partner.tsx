@@ -59,17 +59,17 @@ export default function RegisterPartnerScreen() {
                     <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
                         <Ionicons name="arrow-back" size={24} color={COLORS.text} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Daftar Mitra</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", color: COLORS.text, fontFamily: "PublicSans-Bold" }}>Daftar Mitra</Text>
                 </View>
 
                 <ScrollView contentContainerStyle={{ padding: 24 }}>
-                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginBottom: 24, lineHeight: 24, fontFamily: "GoogleSans-Regular" }}>
+                    <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginBottom: 24, lineHeight: 24, fontFamily: "PublicSans-Regular" }}>
                         Bergabunglah sebagai mitra Kurir Sampah untuk mendapatkan penghasilan tambahan dengan membantu mengelola sampah di lingkungan Anda.
                     </Text>
 
                     <View style={{ gap: 20 }}>
                         <View>
-                            <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "GoogleSans-Medium" }}>Jenis Kendaraan</Text>
+                            <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "PublicSans-Medium" }}>Jenis Kendaraan</Text>
                             <TextInput
                                 style={{
                                     backgroundColor: COLORS.surface,
@@ -78,7 +78,7 @@ export default function RegisterPartnerScreen() {
                                     borderRadius: 12,
                                     padding: 14,
                                     fontSize: 16,
-                                    fontFamily: "GoogleSans-Regular",
+                                    fontFamily: "PublicSans-Regular",
                                 }}
                                 placeholder="Contoh: Motor / Mobil Pickup"
                                 value={vehicleType}
@@ -87,7 +87,7 @@ export default function RegisterPartnerScreen() {
                         </View>
 
                         <View>
-                            <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "GoogleSans-Medium" }}>Plat Nomor</Text>
+                            <Text style={{ fontSize: 14, fontWeight: "500", color: COLORS.text, marginBottom: 8, fontFamily: "PublicSans-Medium" }}>Plat Nomor</Text>
                             <TextInput
                                 style={{
                                     backgroundColor: COLORS.surface,
@@ -96,7 +96,7 @@ export default function RegisterPartnerScreen() {
                                     borderRadius: 12,
                                     padding: 14,
                                     fontSize: 16,
-                                    fontFamily: "GoogleSans-Regular",
+                                    fontFamily: "PublicSans-Regular",
                                 }}
                                 placeholder="Contoh: B 1234 XYZ"
                                 value={licensePlate}
@@ -117,7 +117,7 @@ export default function RegisterPartnerScreen() {
                                 opacity: isLoading ? 0.7 : 1,
                             }}
                         >
-                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Kirim Pendaftaran</Text>}
+                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Kirim Pendaftaran</Text>}
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
