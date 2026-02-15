@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface OpeningHours {
     open: string;
@@ -233,74 +234,76 @@ export default function FacilitiesScreen() {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.background }}>
-            {/* Header */}
-            <View style={{ padding: 20, paddingBottom: 12, backgroundColor: COLORS.surface }}>
-                <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Fasilitas</Text>
-                <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginTop: 4 }}>TPS & Bank Sampah terdekat</Text>
-            </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.surface }} edges={["top"]}>
+            <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+                {/* Header & Filters Container */}
+                <View style={{ backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
+                    {/* Header */}
+                    <View style={{ padding: 20, paddingBottom: 12 }}>
+                        <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Fasilitas</Text>
+                        <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginTop: 4 }}>TPS & Bank Sampah terdekat</Text>
+                    </View>
 
-            {/* Filter Tabs */}
-            <View
-                style={{
-                    flexDirection: "row",
-                    padding: 16,
-                    paddingTop: 12,
-                    paddingBottom: 8,
-                    gap: 8,
-                    backgroundColor: COLORS.surface,
-                    borderBottomWidth: 1,
-                    borderBottomColor: COLORS.border,
-                }}
-            >
-                {(["all", "tps", "waste_bank"] as const).map((type) => (
-                    <TouchableOpacity
-                        key={type}
-                        onPress={() => setSelectedType(type)}
+                    {/* Filter Tabs */}
+                    <View
                         style={{
-                            paddingHorizontal: 16,
-                            paddingVertical: 8,
-                            borderRadius: 20,
-                            backgroundColor: selectedType === type ? COLORS.primary : COLORS.background,
-                            borderWidth: 1,
-                            borderColor: selectedType === type ? COLORS.primary : COLORS.border,
+                            flexDirection: "row",
+                            padding: 16,
+                            paddingTop: 0,
+                            paddingBottom: 12,
+                            gap: 8,
                         }}
                     >
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                fontWeight: selectedType === type ? "600" : "400",
-                                color: selectedType === type ? "white" : COLORS.text,
-                            }}
-                        >
-                            {type === "all" ? "Semua" : FACILITY_TYPES[type].label}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-
-            {isLoading ? (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color={COLORS.primary} />
+                        {(["all", "tps", "waste_bank"] as const).map((type) => (
+                            <TouchableOpacity
+                                key={type}
+                                onPress={() => setSelectedType(type)}
+                                style={{
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 8,
+                                    borderRadius: 20,
+                                    backgroundColor: selectedType === type ? COLORS.primary : COLORS.background,
+                                    borderWidth: 1,
+                                    borderColor: selectedType === type ? COLORS.primary : COLORS.border,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: 14,
+                                        fontWeight: selectedType === type ? "600" : "400",
+                                        color: selectedType === type ? "white" : COLORS.text,
+                                    }}
+                                >
+                                    {type === "all" ? "Semua" : FACILITY_TYPES[type].label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
-            ) : (
-                <FlatList
-                    data={filteredFacilities}
-                    renderItem={renderFacilityCard}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ padding: 16 }}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
-                    ListEmptyComponent={
-                        <View style={{ alignItems: "center", paddingTop: 60 }}>
-                            <Ionicons name="location-outline" size={48} color={COLORS.textSecondary} />
-                            <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Tidak ada fasilitas ditemukan</Text>
-                            <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: 4 }}>Coba ubah filter atau tarik untuk refresh</Text>
-                        </View>
-                    }
-                    ListHeaderComponent={<Text style={{ fontSize: 13, color: COLORS.textSecondary, marginBottom: 12 }}>{filteredFacilities.length} fasilitas ditemukan</Text>}
-                />
-            )}
-        </View>
+
+                {isLoading ? (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <ActivityIndicator size="large" color={COLORS.primary} />
+                    </View>
+                ) : (
+                    <FlatList
+                        data={filteredFacilities}
+                        renderItem={renderFacilityCard}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={{ padding: 16 }}
+                        showsVerticalScrollIndicator={false}
+                        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+                        ListEmptyComponent={
+                            <View style={{ alignItems: "center", paddingTop: 60 }}>
+                                <Ionicons name="location-outline" size={48} color={COLORS.textSecondary} />
+                                <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Tidak ada fasilitas ditemukan</Text>
+                                <Text style={{ fontSize: 13, color: COLORS.textSecondary, marginTop: 4 }}>Coba ubah filter atau tarik untuk refresh</Text>
+                            </View>
+                        }
+                        ListHeaderComponent={<Text style={{ fontSize: 13, color: COLORS.textSecondary, marginBottom: 12 }}>{filteredFacilities.length} fasilitas ditemukan</Text>}
+                    />
+                )}
+            </View>
+        </SafeAreaView>
     );
 }

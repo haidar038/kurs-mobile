@@ -84,24 +84,30 @@ export default function ArticlesScreen() {
     );
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-            <View style={{ padding: 20, paddingBottom: 0 }}>
-                <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Artikel</Text>
-                <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginTop: 4 }}>Pelajari tentang pengelolaan sampah</Text>
-            </View>
-            <FlatList
-                data={articles}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                contentContainerStyle={{ padding: 20 }}
-                refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
-                ListEmptyComponent={
-                    <View style={{ alignItems: "center", paddingTop: 60 }}>
-                        <Ionicons name="book-outline" size={48} color={COLORS.textSecondary} />
-                        <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Belum ada artikel</Text>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.surface }} edges={["top"]}>
+            <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+                {/* Header Container */}
+                <View style={{ backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
+                    <View style={{ padding: 20, paddingBottom: 12 }}>
+                        <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Artikel</Text>
+                        <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginTop: 4 }}>Pelajari tentang pengelolaan sampah</Text>
                     </View>
-                }
-            />
+                </View>
+
+                <FlatList
+                    data={articles}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ padding: 20 }}
+                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+                    ListEmptyComponent={
+                        <View style={{ alignItems: "center", paddingTop: 60 }}>
+                            <Ionicons name="book-outline" size={48} color={COLORS.textSecondary} />
+                            <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Belum ada artikel</Text>
+                        </View>
+                    }
+                />
+            </View>
         </SafeAreaView>
     );
 }

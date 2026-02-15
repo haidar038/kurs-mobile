@@ -1,4 +1,4 @@
-import MapView from "react-native-maps";
+import * as MapLibreGL from "@maplibre/maplibre-react-native";
 
-export * from "react-native-maps";
-export default MapView;
+export default MapLibreGL.MapView;
+export { MapLibreGL };

@@ -1,9 +1,9 @@
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
+import * as MapLibreGL from "@maplibre/maplibre-react-native";
 import * as Location from "expo-location";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import MapView, { type MapPressEvent, Marker, type Region } from "./MapLib";
 
 interface LocationResult {
     latitude: number;
@@ -19,26 +19,29 @@ interface LocationPickerModalProps {
     onClose: () => void;
 }
 
-const DEFAULT_REGION: Region = {
-    latitude: -6.2,
-    longitude: 106.816666,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-};
+const DEFAULT_COORDINATE: [number, number] = [127.3407976, 0.8112671];
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function LocationPickerModal({ visible, initialLatitude, initialLongitude, onConfirm, onClose }: LocationPickerModalProps) {
-    const mapRef = useRef<MapView>(null);
-    const [marker, setMarker] = useState<{ latitude: number; longitude: number } | null>(null);
+    const cameraRef = useRef<MapLibreGL.CameraRef>(null);
+    const [marker, setMarker] = useState<[number, number] | null>(null);
     const [address, setAddress] = useState("");
     const [isGeocoding, setIsGeocoding] = useState(false);
 
     useEffect(() => {
         if (visible) {
             if (initialLatitude && initialLongitude) {
-                setMarker({ latitude: initialLatitude, longitude: initialLongitude });
+                const coords: [number, number] = [initialLongitude, initialLatitude];
+                setMarker(coords);
                 reverseGeocode(initialLatitude, initialLongitude);
+
+                // Set camera to initial position
+                cameraRef.current?.setCamera({
+                    centerCoordinate: coords,
+                    zoomLevel: 15,
+                    animationDuration: 0,
+                });
             } else {
                 detectCurrentLocation();
             }
@@ -52,21 +55,15 @@ export default function LocationPickerModal({ visible, initialLatitude, initialL
             if (status !== "granted") return;
 
             const location = await Location.getCurrentPositionAsync({});
-            const coords = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            };
+            const coords: [number, number] = [location.coords.longitude, location.coords.latitude];
             setMarker(coords);
-            reverseGeocode(coords.latitude, coords.longitude);
+            reverseGeocode(location.coords.latitude, location.coords.longitude);
 
-            mapRef.current?.animateToRegion(
-                {
-                    ...coords,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005,
-                },
-                500,
-            );
+            cameraRef.current?.setCamera({
+                centerCoordinate: coords,
+                zoomLevel: 15,
+                animationDuration: 500,
+            });
         } catch (err) {
             console.log("Location detect failed:", err);
         }
@@ -92,22 +89,20 @@ export default function LocationPickerModal({ visible, initialLatitude, initialL
         }
     };
 
-    const handleMapPress = (e: MapPressEvent) => {
-        const { latitude, longitude } = e.nativeEvent.coordinate;
-        setMarker({ latitude, longitude });
-        reverseGeocode(latitude, longitude);
+    const handleMapPress = (e: any) => {
+        const coords = e.geometry.coordinates as [number, number];
+        setMarker(coords);
+        reverseGeocode(coords[1], coords[0]);
     };
 
     const handleConfirm = () => {
         if (!marker) return;
         onConfirm({
-            latitude: marker.latitude,
-            longitude: marker.longitude,
+            latitude: marker[1],
+            longitude: marker[0],
             address,
         });
     };
-
-    const region: Region = marker ? { ...marker, latitudeDelta: 0.005, longitudeDelta: 0.005 } : DEFAULT_REGION;
 
     return (
         <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -124,19 +119,39 @@ export default function LocationPickerModal({ visible, initialLatitude, initialL
                 </View>
 
                 {/* Map */}
-                <MapView ref={mapRef} style={styles.map} initialRegion={region} onPress={handleMapPress} showsUserLocation showsMyLocationButton={false}>
-                    {marker && (
-                        <Marker
-                            coordinate={marker}
-                            draggable
-                            onDragEnd={(e) => {
-                                const { latitude, longitude } = e.nativeEvent.coordinate;
-                                setMarker({ latitude, longitude });
-                                reverseGeocode(latitude, longitude);
+                <View style={styles.mapContainer}>
+                    <MapLibreGL.MapView style={styles.map} onPress={handleMapPress} logoEnabled={false} attributionEnabled={true}>
+                        <MapLibreGL.Camera
+                            ref={cameraRef}
+                            defaultSettings={{
+                                centerCoordinate: DEFAULT_COORDINATE,
+                                zoomLevel: 10,
                             }}
                         />
-                    )}
-                </MapView>
+
+                        {/* Positron Tiles */}
+                        <MapLibreGL.RasterSource id="positron" tileUrlTemplates={["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"]} tileSize={256}>
+                            <MapLibreGL.RasterLayer id="positronLayer" sourceID="positron" />
+                        </MapLibreGL.RasterSource>
+
+                        {marker && (
+                            <MapLibreGL.PointAnnotation
+                                id="pickerMarker"
+                                coordinate={marker}
+                                draggable
+                                onDragEnd={(e) => {
+                                    const coords = e.geometry.coordinates as [number, number];
+                                    setMarker(coords);
+                                    reverseGeocode(coords[1], coords[0]);
+                                }}
+                            >
+                                <View style={styles.markerContainer}>
+                                    <Ionicons name="location" size={32} color={COLORS.error} />
+                                </View>
+                            </MapLibreGL.PointAnnotation>
+                        )}
+                    </MapLibreGL.MapView>
+                </View>
 
                 {/* Bottom Panel */}
                 <View style={styles.bottomPanel}>
@@ -172,10 +187,18 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.surface,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.border,
+        zIndex: 10,
     },
     headerBtn: { padding: 4 },
     headerTitle: { fontSize: 17, fontWeight: "600", color: COLORS.text },
-    map: { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.6 },
+    mapContainer: { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.6 },
+    map: { flex: 1 },
+    markerContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        width: 40,
+        height: 40,
+    },
     bottomPanel: {
         flex: 1,
         backgroundColor: COLORS.surface,
@@ -188,6 +211,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 5,
+        zIndex: 5,
     },
     addressRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
     addressText: {

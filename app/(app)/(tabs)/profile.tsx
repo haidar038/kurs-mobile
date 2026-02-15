@@ -8,22 +8,23 @@ import { Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
-    const { profile, user, signOut, switchRole } = useAuth();
+    const { profile, user, signOut, switchRole, hasRole } = useAuth();
     const router = useRouter();
     const [partnerStatus, setPartnerStatus] = useState<"none" | "pending" | "approved">("none");
+    const [staffStatus, setStaffStatus] = useState<"none" | "pending" | "approved">("none");
 
     useFocusEffect(
         useCallback(() => {
             const checkPartnerStatus = async () => {
                 if (!user) return;
 
-                // If already collector, status is approved (handled by profile.role)
-                if (profile?.role === "collector") {
+                // If already collector, status is approved
+                if (hasRole("collector")) {
                     setPartnerStatus("approved");
                     return;
                 }
 
-                const { data } = await supabase.from("collectors").select("id").eq("user_id", user.id).maybeSingle();
+                const { data } = await supabase.from("role_applications").select("id").eq("user_id", user.id).eq("requested_role", "collector").eq("status", "pending").maybeSingle();
 
                 if (data) {
                     setPartnerStatus("pending");
@@ -32,8 +33,26 @@ export default function ProfileScreen() {
                 }
             };
 
+            const checkStaffStatus = async () => {
+                if (!user) return;
+
+                if (hasRole("waste_bank_staff")) {
+                    setStaffStatus("approved");
+                    return;
+                }
+
+                const { data } = await supabase.from("role_applications").select("id").eq("user_id", user.id).eq("requested_role", "waste_bank_staff").eq("status", "pending").maybeSingle();
+
+                if (data) {
+                    setStaffStatus("pending");
+                } else {
+                    setStaffStatus("none");
+                }
+            };
+
             checkPartnerStatus();
-        }, [user, profile?.role]),
+            checkStaffStatus();
+        }, [user, hasRole]),
     );
 
     const handleSignOut = () => {
@@ -150,11 +169,11 @@ export default function ProfileScreen() {
 
                 {/* Partner Section */}
                 <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
-                    {profile?.role === "collector" ? (
+                    {hasRole("collector") ? (
                         <TouchableOpacity
                             onPress={() => {
                                 switchRole("collector");
-                                router.replace("/(collector)/dashboard" as any);
+                                router.replace("/(collector)/(tabs)/dashboard" as any);
                             }}
                             style={{
                                 backgroundColor: COLORS.secondary,
@@ -195,6 +214,57 @@ export default function ProfileScreen() {
                             }}
                         >
                             <Text style={{ color: COLORS.primary, fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar Jadi Mitra</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                {/* Staff Section */}
+                <View style={{ marginTop: 12, paddingHorizontal: 20 }}>
+                    {hasRole("waste_bank_staff") ? (
+                        <TouchableOpacity
+                            onPress={() => {
+                                switchRole("waste_bank_staff");
+                                router.replace("/(waste-bank)/(tabs)" as any);
+                            }}
+                            style={{
+                                backgroundColor: COLORS.primary,
+                                padding: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                gap: 8,
+                            }}
+                        >
+                            <Ionicons name="business" size={24} color="white" />
+                            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", fontFamily: "GoogleSans-Bold" }}>Masuk Mode Staff</Text>
+                        </TouchableOpacity>
+                    ) : staffStatus === "pending" ? (
+                        <View
+                            style={{
+                                backgroundColor: COLORS.surface,
+                                padding: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                                borderWidth: 1,
+                                borderColor: COLORS.border,
+                            }}
+                        >
+                            <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Pendaftaran Staff Sedang Diproses</Text>
+                        </View>
+                    ) : (
+                        <TouchableOpacity
+                            onPress={() => router.push("/(app)/profile/register-staff" as any)}
+                            style={{
+                                backgroundColor: COLORS.surface,
+                                padding: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                                borderWidth: 1,
+                                borderColor: COLORS.secondary,
+                            }}
+                        >
+                            <Text style={{ color: COLORS.secondary, fontSize: 16, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar Jadi Staff Bank Sampah</Text>
                         </TouchableOpacity>
                     )}
                 </View>

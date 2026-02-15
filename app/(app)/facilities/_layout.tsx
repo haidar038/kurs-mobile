@@ -12,6 +12,13 @@ export default function FacilitiesLayout() {
             }}
         >
             <Stack.Screen
+                name="map"
+                options={{
+                    title: "Cari Fasilitas",
+                    headerShown: true,
+                }}
+            />
+            <Stack.Screen
                 name="[id]"
                 options={{
                     title: "Detail Fasilitas",

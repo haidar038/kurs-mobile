@@ -23,18 +23,20 @@ export default function RegisterPartnerScreen() {
         setIsLoading(true);
 
         try {
-            // 1. Insert into collectors table
-            const { error } = await supabase.from("collectors").insert({
+            // 1. Insert into role_applications table
+            const { error } = await supabase.from("role_applications").insert({
                 user_id: user?.id,
-                vehicle_type: vehicleType,
-                license_plate: licensePlate,
-                status: "offline", // Default status
-                current_location: null,
+                requested_role: "collector",
+                status: "pending",
+                metadata: {
+                    vehicle_type: vehicleType,
+                    license_plate: licensePlate,
+                },
             });
 
             if (error) throw error;
 
-            Alert.alert("Pendaftaran Berhasil", "Data Anda telah dikirim. Mohon tunggu verifikasi dari Admin untuk mengaktifkan akun Mitra Anda.", [
+            Alert.alert("Pendaftaran Dikirim", "Permohonan Anda sebagai Mitra telah dikirim. Mohon tunggu verifikasi dari Admin untuk mengaktifkan akun Mitra Anda.", [
                 {
                     text: "OK",
                     onPress: () => {
@@ -44,7 +46,7 @@ export default function RegisterPartnerScreen() {
                 },
             ]);
         } catch (error: any) {
-            Alert.alert("Gagal Mendaftar", error.message);
+            Alert.alert("Gagal Mengirim Pendaftaran", error.message);
         } finally {
             setIsLoading(false);
         }

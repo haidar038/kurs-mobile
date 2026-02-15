@@ -387,6 +387,73 @@ export type Database = {
                     },
                 ];
             };
+            user_roles: {
+                Row: {
+                    created_at: string | null;
+                    id: string;
+                    role: Database["public"]["Enums"]["user_role"];
+                    user_id: string | null;
+                };
+                Insert: {
+                    created_at?: string | null;
+                    id?: string;
+                    role: Database["public"]["Enums"]["user_role"];
+                    user_id?: string | null;
+                };
+                Update: {
+                    created_at?: string | null;
+                    id?: string;
+                    role?: Database["public"]["Enums"]["user_role"];
+                    user_id?: string | null;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: "user_roles_user_id_fkey";
+                        columns: ["user_id"];
+                        isOneToOne: false;
+                        referencedRelation: "profiles";
+                        referencedColumns: ["id"];
+                    },
+                ];
+            };
+            role_applications: {
+                Row: {
+                    created_at: string | null;
+                    id: string;
+                    metadata: Json | null;
+                    requested_role: Database["public"]["Enums"]["user_role"];
+                    status: string;
+                    updated_at: string | null;
+                    user_id: string | null;
+                };
+                Insert: {
+                    created_at?: string | null;
+                    id?: string;
+                    metadata?: Json | null;
+                    requested_role: Database["public"]["Enums"]["user_role"];
+                    status?: string;
+                    updated_at?: string | null;
+                    user_id?: string | null;
+                };
+                Update: {
+                    created_at?: string | null;
+                    id?: string;
+                    metadata?: Json | null;
+                    requested_role?: Database["public"]["Enums"]["user_role"];
+                    status?: string;
+                    updated_at?: string | null;
+                    user_id?: string | null;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: "role_applications_user_id_fkey";
+                        columns: ["user_id"];
+                        isOneToOne: false;
+                        referencedRelation: "profiles";
+                        referencedColumns: ["id"];
+                    },
+                ];
+            };
         };
         Views: {
             [_ in never]: never;

@@ -1,13 +1,16 @@
 import { supabase } from "@/lib/supabase";
 import { COLORS } from "@/utils/constants";
-import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSent, setIsSent] = useState(false);
+    const router = useRouter();
 
     const handleReset = async () => {
         if (!email) {
@@ -30,142 +33,171 @@ export default function ForgotPasswordScreen() {
 
     if (isSent) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingHorizontal: 24,
-                    backgroundColor: COLORS.background,
-                }}
-            >
-                <Text style={{ fontSize: 48, marginBottom: 16 }}>📧</Text>
-                <Text
+            <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+                <View
                     style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        color: COLORS.text,
-                        textAlign: "center",
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingHorizontal: 24,
                     }}
                 >
-                    Cek Email Anda
-                </Text>
-                <Text
-                    style={{
-                        fontSize: 16,
-                        color: COLORS.textSecondary,
-                        textAlign: "center",
-                        marginTop: 12,
-                        lineHeight: 24,
-                    }}
-                >
-                    Kami telah mengirim link reset password ke {email}
-                </Text>
-                <Link href="/(auth)/login" asChild>
+                    {/* Back Button */}
                     <TouchableOpacity
-                        style={{
-                            backgroundColor: COLORS.primary,
-                            paddingVertical: 14,
-                            paddingHorizontal: 32,
-                            borderRadius: 12,
-                            marginTop: 32,
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/(auth)/welcome");
+                            }
                         }}
+                        style={{ position: "absolute", top: 10, left: 10, padding: 10 }}
                     >
-                        <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kembali ke Login</Text>
+                        <Ionicons name="arrow-back" size={24} color={COLORS.textSecondary} />
                     </TouchableOpacity>
-                </Link>
-            </View>
-        );
-    }
-
-    return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    paddingHorizontal: 24,
-                    backgroundColor: COLORS.background,
-                }}
-            >
-                {/* Header */}
-                <View style={{ alignItems: "center", marginBottom: 40 }}>
+                    <Text style={{ fontSize: 48, marginBottom: 16 }}>📧</Text>
                     <Text
                         style={{
-                            fontSize: 32,
+                            fontSize: 24,
                             fontWeight: "bold",
                             color: COLORS.text,
+                            textAlign: "center",
                         }}
                     >
-                        Lupa Password
+                        Cek Email Anda
                     </Text>
                     <Text
                         style={{
                             fontSize: 16,
                             color: COLORS.textSecondary,
-                            marginTop: 8,
                             textAlign: "center",
+                            marginTop: 12,
+                            lineHeight: 24,
                         }}
                     >
-                        Masukkan email untuk reset password
+                        Kami telah mengirim link reset password ke {email}
                     </Text>
-                </View>
-
-                {/* Form */}
-                <View style={{ gap: 16 }}>
-                    <View>
-                        <Text
+                    <Link href="/(auth)/login" asChild>
+                        <TouchableOpacity
                             style={{
-                                fontSize: 14,
-                                fontWeight: "500",
-                                color: COLORS.text,
-                                marginBottom: 8,
+                                backgroundColor: COLORS.primary,
+                                paddingVertical: 14,
+                                paddingHorizontal: 32,
+                                borderRadius: 12,
+                                marginTop: 32,
                             }}
                         >
-                            Email
-                        </Text>
-                        <TextInput
+                            <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kembali ke Login</Text>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 24 }}>
+                    {/* Back Button */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/(auth)/welcome");
+                            }
+                        }}
+                        style={{ position: "absolute", top: 10, left: 10, padding: 10 }}
+                    >
+                        <Ionicons name="arrow-back" size={24} color={COLORS.textSecondary} />
+                    </TouchableOpacity>
+                    {/* Header */}
+                    <View style={{ alignItems: "center", marginBottom: 40 }}>
+                        <Text
                             style={{
-                                backgroundColor: COLORS.surface,
-                                borderWidth: 1,
-                                borderColor: COLORS.border,
-                                borderRadius: 12,
-                                paddingHorizontal: 16,
-                                paddingVertical: 14,
-                                fontSize: 16,
+                                fontSize: 32,
+                                fontWeight: "bold",
+                                color: COLORS.text,
                             }}
-                            placeholder="email@example.com"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoComplete="email"
-                        />
+                        >
+                            Lupa Password
+                        </Text>
+                        <Text
+                            style={{
+                                fontSize: 16,
+                                color: COLORS.textSecondary,
+                                marginTop: 8,
+                                textAlign: "center",
+                            }}
+                        >
+                            Masukkan email untuk reset password
+                        </Text>
                     </View>
 
-                    <TouchableOpacity
-                        onPress={handleReset}
-                        disabled={isLoading}
-                        style={{
-                            backgroundColor: COLORS.primary,
-                            paddingVertical: 16,
-                            borderRadius: 12,
-                            alignItems: "center",
-                            marginTop: 8,
-                            opacity: isLoading ? 0.7 : 1,
-                        }}
-                    >
-                        {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kirim Link Reset</Text>}
-                    </TouchableOpacity>
-                </View>
+                    {/* Form */}
+                    <View style={{ gap: 16 }}>
+                        <View>
+                            <Text
+                                style={{
+                                    fontSize: 14,
+                                    fontWeight: "500",
+                                    color: COLORS.text,
+                                    marginBottom: 8,
+                                }}
+                            >
+                                Email
+                            </Text>
+                            <TextInput
+                                style={{
+                                    backgroundColor: COLORS.surface,
+                                    borderWidth: 1,
+                                    borderColor: COLORS.border,
+                                    borderRadius: 12,
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 14,
+                                    fontSize: 16,
+                                }}
+                                placeholder="email@example.com"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoComplete="email"
+                            />
+                        </View>
 
-                {/* Footer */}
-                <Link href="/(auth)/login" asChild>
-                    <TouchableOpacity style={{ alignItems: "center", marginTop: 32 }}>
+                        <TouchableOpacity
+                            onPress={handleReset}
+                            disabled={isLoading}
+                            style={{
+                                backgroundColor: COLORS.primary,
+                                paddingVertical: 16,
+                                borderRadius: 12,
+                                alignItems: "center",
+                                marginTop: 8,
+                                opacity: isLoading ? 0.7 : 1,
+                            }}
+                        >
+                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Kirim Link Reset</Text>}
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Footer */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/(auth)/login");
+                            }
+                        }}
+                        style={{ alignItems: "center", marginTop: 32 }}
+                    >
                         <Text style={{ color: COLORS.primary, fontWeight: "600" }}>← Kembali ke Login</Text>
                     </TouchableOpacity>
-                </Link>
-            </View>
-        </KeyboardAvoidingView>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

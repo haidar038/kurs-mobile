@@ -5,7 +5,7 @@ export default function WasteBankLayout() {
         <Stack
             screenOptions={{
                 headerShown: false,
-                headerStyle: { backgroundColor: "#3B82F6" },
+                headerStyle: { backgroundColor: "#10B981" },
                 headerTintColor: "white",
             }}
         >

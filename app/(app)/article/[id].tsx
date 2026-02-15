@@ -2,11 +2,13 @@ import { supabase } from "@/lib/supabase";
 import { Article } from "@/types/database";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
+import TableRenderer from "@native-html/table-plugin";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Linking, ScrollView, Share, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import RenderHTML from "react-native-render-html";
 import { SafeAreaView } from "react-native-safe-area-context";
+import WebView from "react-native-webview";
 
 // Helper to sanitize HTML
 function cleanHTML(html: string) {
@@ -80,6 +82,22 @@ const tagsStyles: any = {
         marginBottom: 16,
         backgroundColor: COLORS.surface,
         paddingVertical: 8,
+    },
+    table: {
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        marginBottom: 16,
+    },
+    th: {
+        backgroundColor: COLORS.surface,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        padding: 8,
+    },
+    td: {
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        padding: 8,
     },
 };
 
@@ -200,6 +218,10 @@ export default function ArticleDetailScreen() {
                             contentWidth={width}
                             source={source}
                             tagsStyles={tagsStyles}
+                            renderers={{
+                                table: TableRenderer,
+                            }}
+                            WebView={WebView}
                             renderersProps={{
                                 a: {
                                     onPress: (_, href) => {

@@ -1,7 +1,7 @@
 import { useAuth } from "@/providers/AuthProvider";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,6 +15,7 @@ export default function RegisterScreen() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { signUp } = useAuth();
+    const router = useRouter();
 
     const handleRegister = async () => {
         if (!fullName || !email || !password || !confirmPassword) {
@@ -133,6 +134,20 @@ export default function RegisterScreen() {
                     }}
                     keyboardShouldPersistTaps="handled"
                 >
+                    {/* Back Button */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/(auth)/welcome");
+                            }
+                        }}
+                        style={{ position: "absolute", top: 10, left: 10, padding: 10, zIndex: 10 }}
+                    >
+                        <Ionicons name="arrow-back" size={24} color={COLORS.textSecondary} />
+                    </TouchableOpacity>
+
                     {/* Header */}
                     <View style={{ alignItems: "center", marginBottom: 40 }}>
                         <View

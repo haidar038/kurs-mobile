@@ -2,18 +2,49 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
+    const { type } = useLocalSearchParams<{ type: string }>();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { signIn, switchRole } = useAuth();
+    const { signIn, signOut, switchRole } = useAuth();
     const router = useRouter();
+
+    // Configuration based on role type
+    const config = useMemo(() => {
+        switch (type) {
+            case "collector":
+                return {
+                    title: "Masuk Mitra",
+                    subtitle: "Kurir Driver",
+                    color: "#3B82F6",
+                    icon: "bicycle" as keyof typeof Ionicons.glyphMap,
+                    showRegister: false,
+                };
+            case "staff":
+                return {
+                    title: "Masuk Staff",
+                    subtitle: "Bank Sampah",
+                    color: "#8B5CF6",
+                    icon: "business" as keyof typeof Ionicons.glyphMap,
+                    showRegister: false,
+                };
+            default:
+                return {
+                    title: "Masuk Pengguna",
+                    subtitle: "Kurir Sampah",
+                    color: COLORS.primary,
+                    icon: "leaf" as keyof typeof Ionicons.glyphMap,
+                    showRegister: true,
+                };
+        }
+    }, [type]);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -36,38 +67,58 @@ export default function LoginScreen() {
         } = await supabase.auth.getSession();
 
         if (session?.user) {
-            const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+            // Fetch all roles for the user
+            const { data: rolesData } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id);
+            const userRoles = (rolesData?.map((r) => r.role) as any[]) || [];
 
             setIsLoading(false);
 
-            if (profile?.role === "collector") {
-                Alert.alert("Pilih Mode Masuk", "Anda terdaftar sebagai Mitra. Ingin masuk sebagai?", [
-                    {
-                        text: "Pengguna (User)",
-                        onPress: () => {
-                            switchRole("user");
-                            router.replace("/(tabs)/home" as any);
-                        },
-                    },
-                    {
-                        text: "Mitra (Driver)",
-                        onPress: () => {
-                            switchRole("collector");
-                            router.replace("/(collector)/dashboard" as any);
-                        },
-                    },
-                ]);
-            } else if (profile?.role === "waste_bank_staff") {
-                // Waste Bank Staff
-                router.replace("/(waste-bank)/(tabs)" as any);
-            } else if (profile?.role === "admin") {
-                // For now redirect admin to user home, or web dashboard if we had one
-                switchRole("user");
-                router.replace("/(tabs)/home" as any);
+            // Strict Role Validation Logic
+            let isAuthorized = false;
+            let errorMessage = "";
+            let targetRole = "";
+
+            if (type === "collector") {
+                if (userRoles.includes("collector")) {
+                    isAuthorized = true;
+                    targetRole = "collector";
+                } else {
+                    errorMessage = "Akun Anda tidak terdaftar sebagai Mitra.";
+                }
+            } else if (type === "staff") {
+                if (userRoles.includes("waste_bank_staff")) {
+                    isAuthorized = true;
+                    targetRole = "waste_bank_staff";
+                } else {
+                    errorMessage = "Akun Anda tidak memiliki akses Staff Bank Sampah.";
+                }
             } else {
-                // Default user
-                switchRole("user");
-                router.replace("/(tabs)/home" as any);
+                // Default User portal login
+                // Allows ANYONE with 'user', 'collector', or 'waste_bank_staff' role
+                if (userRoles.includes("user") || userRoles.includes("collector") || userRoles.includes("waste_bank_staff")) {
+                    isAuthorized = true;
+                    targetRole = "user";
+                } else {
+                    errorMessage = "Role akun Anda tidak didukung di portal ini.";
+                }
+            }
+
+            if (isAuthorized) {
+                // Final redirection after validation
+                if (targetRole === "collector") {
+                    switchRole("collector");
+                    router.replace("/(collector)/(tabs)/dashboard" as any);
+                } else if (targetRole === "waste_bank_staff") {
+                    router.replace("/(waste-bank)/(tabs)" as any);
+                } else {
+                    switchRole("user");
+                    router.replace("/(app)/(tabs)/home" as any);
+                }
+            } else {
+                // Not authorized for this portal - FORCE SIGN OUT
+                // Stay on the same portal login page after sign out
+                await signOut(`/(auth)/login?type=${type}`);
+                Alert.alert("Akses Ditolak", errorMessage);
             }
         } else {
             setIsLoading(false);
@@ -77,44 +128,52 @@ export default function LoginScreen() {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        paddingHorizontal: 24,
-                    }}
-                >
+                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingHorizontal: 24 }}>
+                    {/* Back Button */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/(auth)/welcome");
+                            }
+                        }}
+                        style={{ position: "absolute", top: 10, left: 10, padding: 10 }}
+                    >
+                        <Ionicons name="arrow-back" size={24} color={COLORS.textSecondary} />
+                    </TouchableOpacity>
+
                     {/* Logo */}
-                    <View style={{ alignItems: "center", marginBottom: 48 }}>
+                    <View style={{ alignItems: "center", marginBottom: 40 }}>
                         <View
                             style={{
                                 width: 80,
                                 height: 80,
                                 borderRadius: 24,
-                                backgroundColor: COLORS.primary,
+                                backgroundColor: config.color,
                                 alignItems: "center",
                                 justifyContent: "center",
                                 marginBottom: 16,
-                                shadowColor: COLORS.primary,
+                                shadowColor: config.color,
                                 shadowOffset: { width: 0, height: 8 },
                                 shadowOpacity: 0.3,
                                 shadowRadius: 16,
                                 elevation: 8,
                             }}
                         >
-                            <Ionicons name="leaf" size={40} color="white" />
+                            <Ionicons name={config.icon} size={40} color="white" />
                         </View>
                         <Text
                             style={{
-                                fontSize: 36,
+                                fontSize: 32,
                                 fontWeight: "bold",
-                                color: COLORS.primary,
+                                color: config.color,
                                 fontFamily: "GoogleSans-Bold",
                             }}
                         >
-                            KURS
+                            {config.title}
                         </Text>
-                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 4, fontFamily: "GoogleSans-Regular" }}>Kurir Sampah</Text>
+                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 4, fontFamily: "GoogleSans-Regular" }}>{config.subtitle}</Text>
                     </View>
 
                     {/* Form */}
@@ -194,6 +253,7 @@ export default function LoginScreen() {
                                         paddingHorizontal: 12,
                                         paddingVertical: 14,
                                         fontSize: 16,
+                                        color: COLORS.text,
                                         fontFamily: "GoogleSans-Regular",
                                     }}
                                     placeholder="••••••••"
@@ -211,7 +271,7 @@ export default function LoginScreen() {
 
                         <Link href="/(auth)/forgot-password" asChild>
                             <TouchableOpacity style={{ alignSelf: "flex-end" }}>
-                                <Text style={{ color: COLORS.primary, fontSize: 14, fontFamily: "GoogleSans-Medium" }}>Lupa password?</Text>
+                                <Text style={{ color: config.color, fontSize: 14, fontFamily: "GoogleSans-Medium" }}>Lupa password?</Text>
                             </TouchableOpacity>
                         </Link>
 
@@ -219,13 +279,13 @@ export default function LoginScreen() {
                             onPress={handleLogin}
                             disabled={isLoading}
                             style={{
-                                backgroundColor: COLORS.primary,
+                                backgroundColor: config.color,
                                 paddingVertical: 16,
                                 borderRadius: 12,
                                 alignItems: "center",
                                 marginTop: 8,
                                 opacity: isLoading ? 0.7 : 1,
-                                shadowColor: COLORS.primary,
+                                shadowColor: config.color,
                                 shadowOffset: { width: 0, height: 4 },
                                 shadowOpacity: 0.3,
                                 shadowRadius: 8,
@@ -237,22 +297,24 @@ export default function LoginScreen() {
                     </View>
 
                     {/* Footer */}
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            marginTop: 32,
-                            gap: 4,
-                        }}
-                    >
-                        <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Belum punya akun?</Text>
-                        <Link href="/(auth)/register" asChild>
-                            <TouchableOpacity>
-                                <Text style={{ color: COLORS.primary, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar</Text>
-                            </TouchableOpacity>
-                        </Link>
-                    </View>
-                </View>
+                    {config.showRegister && (
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                marginTop: 32,
+                                gap: 4,
+                            }}
+                        >
+                            <Text style={{ color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>Belum punya akun?</Text>
+                            <Link href="/(auth)/register" asChild>
+                                <TouchableOpacity>
+                                    <Text style={{ color: config.color, fontWeight: "600", fontFamily: "GoogleSans-SemiBold" }}>Daftar</Text>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
+                    )}
+                </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );

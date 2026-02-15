@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "565796006806",
+    "project_id": "jaga-bumi",
+    "storage_bucket": "jaga-bumi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565796006806:android:8663ed51c02c7a6f1e0bb7",
+        "android_client_info": {
+          "package_name": "com.binaryverse.jagabumi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-42LtmFESY-X3_AenT4slwtiO2IGSwGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

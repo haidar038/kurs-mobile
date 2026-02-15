@@ -4,23 +4,21 @@ import type { PickupRequest } from "@/types/database";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { Linking, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Linking, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CollectorDashboard() {
-    // const { switchRole, profile, user } = useAuth();
     const { profile, user } = useAuth();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const [isTracking, setIsTracking] = useState(false);
+    const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
 
-    // const handleSwitchToUser = () => {
-    //     switchRole("user");
-    //     router.replace("/(tabs)/home" as any);
-    // };
-
-    // First, get the collector record for this user
-    const { data: collector } = useQuery({
+    // Get collector record
+    const { data: collector, refetch: refetchCollector } = useQuery({
         queryKey: ["collector", user?.id],
         queryFn: async () => {
             const { data, error } = await supabase.from("collectors").select("*").eq("user_id", user!.id).single();
@@ -29,6 +27,89 @@ export default function CollectorDashboard() {
         },
         enabled: !!user?.id,
     });
+
+    // Sync local tracking state with DB status whenever it changes
+    useEffect(() => {
+        if (collector) {
+            setIsTracking(collector.status === "available");
+        }
+    }, [collector, collector?.status]);
+
+    // Cleanup subscription on unmount
+    useEffect(() => {
+        return () => {
+            if (locationSubscription) {
+                locationSubscription.remove();
+            }
+        };
+    }, [locationSubscription]);
+
+    // Handle tracking logic
+    useEffect(() => {
+        let sub: Location.LocationSubscription | null = null;
+
+        const startTracking = async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== "granted") {
+                alert("Izin lokasi diperlukan untuk fitur ini.");
+                setIsTracking(false);
+                return;
+            }
+
+            sub = await Location.watchPositionAsync(
+                {
+                    accuracy: Location.Accuracy.High,
+                    timeInterval: 10000,
+                    distanceInterval: 10,
+                },
+                async (location) => {
+                    if (collector?.id) {
+                        const { latitude, longitude } = location.coords;
+                        await supabase
+                            .from("collectors")
+                            .update({
+                                current_location: { lat: latitude, lng: longitude },
+                            })
+                            .eq("id", collector.id);
+                    }
+                },
+            );
+            setLocationSubscription(sub);
+        };
+
+        const stopTracking = () => {
+            if (locationSubscription) {
+                locationSubscription.remove();
+                setLocationSubscription(null);
+            }
+            if (sub) {
+                sub.remove();
+            }
+        };
+
+        if (isTracking) {
+            startTracking();
+        } else {
+            stopTracking();
+        }
+
+        return () => {
+            if (sub) sub.remove();
+            if (locationSubscription) locationSubscription.remove();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isTracking, collector?.id]);
+
+    const toggleStatus = async () => {
+        const newStatus = !isTracking;
+        setIsTracking(newStatus);
+
+        if (collector?.id) {
+            const statusToSet = newStatus ? "available" : "offline";
+            await supabase.from("collectors").update({ status: statusToSet }).eq("id", collector.id);
+            queryClient.invalidateQueries({ queryKey: ["collector", user?.id] });
+        }
+    };
 
     // Get available jobs (requested status)
     const {
@@ -48,11 +129,15 @@ export default function CollectorDashboard() {
     const { data: myJobs, refetch: refetchMyJobs } = useQuery({
         queryKey: ["my-jobs", collector?.id],
         queryFn: async () => {
-            const { data, error } = await supabase.from("pickup_requests").select("*").eq("collector_id", collector!.id).in("status", ["assigned", "en_route"]).order("created_at", { ascending: false });
-            if (error) throw error;
-            return data as PickupRequest[];
+            const { data } = await supabase.from("collectors").select("*").eq("user_id", user!.id).single();
+            if (data) {
+                const { data: jobs, error: jobsError } = await supabase.from("pickup_requests").select("*").eq("collector_id", data.id).in("status", ["assigned", "en_route"]).order("created_at", { ascending: false });
+                if (jobsError) throw jobsError;
+                return jobs as PickupRequest[];
+            }
+            return [];
         },
-        enabled: !!collector?.id,
+        enabled: !!user?.id,
     });
 
     const acceptJobMutation = useMutation({
@@ -69,11 +154,15 @@ export default function CollectorDashboard() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["available-jobs"] });
             queryClient.invalidateQueries({ queryKey: ["my-jobs"] });
+            alert("Job berhasil diambil!");
+        },
+        onError: (error) => {
+            alert("Gagal mengambil job: " + error.message);
         },
     });
 
     const onRefresh = async () => {
-        await Promise.all([refetchAvailable(), refetchMyJobs()]);
+        await Promise.all([refetchAvailable(), refetchMyJobs(), refetchCollector()]);
     };
 
     const renderJobCard = ({ item, isMyJob }: { item: PickupRequest; isMyJob?: boolean }) => (
@@ -85,8 +174,7 @@ export default function CollectorDashboard() {
                 marginBottom: 12,
                 borderWidth: 1,
                 borderColor: COLORS.border,
-                marginRight: isMyJob ? 16 : 0,
-                width: isMyJob ? 300 : "100%",
+                width: "100%",
             }}
         >
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -103,6 +191,10 @@ export default function CollectorDashboard() {
                     >
                         {item.address || "Alamat tidak tersedia"}
                     </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
+                        <Ionicons name="cube-outline" size={14} color={COLORS.textSecondary} />
+                        <Text style={{ fontSize: 14, color: COLORS.textSecondary, marginLeft: 4 }}>{item.volume_estimate || "Estimasi tidak ada"}</Text>
+                    </View>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8, gap: 4 }}>
                         {item.waste_types.map((type: string) => (
                             <View
@@ -119,7 +211,9 @@ export default function CollectorDashboard() {
                         ))}
                     </View>
                 </View>
-                <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.primary }}>Rp {(item.fee ?? 0).toLocaleString("id-ID")}</Text>
+                <View style={{ alignItems: "flex-end" }}>
+                    <Text style={{ fontSize: 16, fontWeight: "bold", color: COLORS.primary }}>Rp {(item.fee ?? 0).toLocaleString("id-ID")}</Text>
+                </View>
             </View>
 
             {isMyJob ? (
@@ -157,18 +251,24 @@ export default function CollectorDashboard() {
                 </View>
             ) : (
                 <TouchableOpacity
-                    onPress={() => acceptJobMutation.mutate(item.id)}
-                    disabled={acceptJobMutation.isPending}
+                    onPress={() => {
+                        if (myJobs && myJobs.length > 0) {
+                            alert("Selesaikan job aktif Anda terlebih dahulu sebelum mengambil job baru.");
+                            return;
+                        }
+                        acceptJobMutation.mutate(item.id);
+                    }}
+                    disabled={acceptJobMutation.isPending || (myJobs && myJobs.length > 0)}
                     style={{
                         marginTop: 16,
-                        backgroundColor: COLORS.primary,
+                        backgroundColor: myJobs && myJobs.length > 0 ? COLORS.textSecondary + "40" : COLORS.primary,
                         paddingVertical: 12,
                         borderRadius: 8,
                         alignItems: "center",
                         opacity: acceptJobMutation.isPending ? 0.7 : 1,
                     }}
                 >
-                    <Text style={{ color: "white", fontWeight: "600" }}>Ambil Job</Text>
+                    {acceptJobMutation.isPending ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontWeight: "600" }}>{myJobs && myJobs.length > 0 ? "Selesaikan Job Aktif" : "Ambil Job"}</Text>}
                 </TouchableOpacity>
             )}
         </View>
@@ -183,32 +283,59 @@ export default function CollectorDashboard() {
                         <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text, fontFamily: "GoogleSans-Bold" }}>Halo, Mitra!</Text>
                         <Text style={{ fontSize: 16, color: COLORS.textSecondary, fontFamily: "GoogleSans-Regular" }}>{profile?.full_name}</Text>
                     </View>
-                    {/* <TouchableOpacity
-                        onPress={handleSwitchToUser}
+                    <TouchableOpacity
+                        onPress={toggleStatus}
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            backgroundColor: COLORS.surface,
-                            padding: 8,
+                            backgroundColor: isTracking ? "#E6F4EA" : "#FCE8E6",
+                            paddingHorizontal: 12,
+                            paddingVertical: 8,
                             borderRadius: 20,
                             borderWidth: 1,
-                            borderColor: COLORS.border,
+                            borderColor: isTracking ? "#1E8E3E" : "#C5221F",
                         }}
                     >
-                        <Ionicons name="person-outline" size={20} color={COLORS.primary} />
-                        <Text style={{ marginLeft: 8, color: COLORS.primary, fontWeight: "600", fontFamily: "GoogleSans-Medium" }}>Mode User</Text>
-                    </TouchableOpacity> */}
+                        <View
+                            style={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: 5,
+                                backgroundColor: isTracking ? "#1E8E3E" : "#C5221F",
+                                marginRight: 8,
+                            }}
+                        />
+                        <Text
+                            style={{
+                                color: isTracking ? "#1E8E3E" : "#C5221F",
+                                fontWeight: "600",
+                                fontFamily: "GoogleSans-Medium",
+                            }}
+                        >
+                            {isTracking ? "Online" : "Offline"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
-                {/* Active Jobs Section (Horizontal if multiple, or just list) */}
+                {/* Status Card (if needed, but header toggle is cleaner) */}
+                {collector && (
+                    <View style={{ backgroundColor: COLORS.surface, padding: 16, borderRadius: 12, marginBottom: 24, borderWidth: 1, borderColor: COLORS.border }}>
+                        <Text style={{ fontSize: 16, fontWeight: "600", color: COLORS.text }}>Status Kendaraan</Text>
+                        <Text style={{ color: COLORS.textSecondary, marginTop: 4 }}>
+                            {collector.vehicle_type} - {collector.license_plate}
+                        </Text>
+                    </View>
+                )}
+
+                {/* Active Jobs Section (Vertical list for consistency) */}
                 {myJobs && myJobs.length > 0 && (
                     <View style={{ marginBottom: 24 }}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: COLORS.text, marginBottom: 12, fontFamily: "GoogleSans-Bold" }}>Job Aktif ({myJobs.length})</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -24, paddingHorizontal: 24 }}>
+                        <View>
                             {myJobs.map((job) => (
                                 <View key={job.id}>{renderJobCard({ item: job, isMyJob: true })}</View>
                             ))}
-                        </ScrollView>
+                        </View>
                     </View>
                 )}
 

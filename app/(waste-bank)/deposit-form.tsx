@@ -92,7 +92,7 @@ export default function DepositFormScreen() {
             {/* Depositor Info */}
             <View
                 style={{
-                    backgroundColor: COLORS.secondary + "20",
+                    backgroundColor: COLORS.primary + "20",
                     padding: 16,
                     borderRadius: 12,
                     marginBottom: 20,
@@ -105,7 +105,7 @@ export default function DepositFormScreen() {
                         width: 48,
                         height: 48,
                         borderRadius: 24,
-                        backgroundColor: COLORS.secondary,
+                        backgroundColor: COLORS.primary,
                         alignItems: "center",
                         justifyContent: "center",
                     }}
@@ -141,9 +141,9 @@ export default function DepositFormScreen() {
                                 paddingHorizontal: 14,
                                 paddingVertical: 10,
                                 borderRadius: 20,
-                                backgroundColor: wasteType === type.id ? COLORS.secondary : COLORS.surface,
+                                backgroundColor: wasteType === type.id ? COLORS.primary : COLORS.surface,
                                 borderWidth: 1,
-                                borderColor: wasteType === type.id ? COLORS.secondary : COLORS.border,
+                                borderColor: wasteType === type.id ? COLORS.primary : COLORS.border,
                             }}
                         >
                             <Text style={{ fontSize: 16, marginRight: 6 }}>{type.icon}</Text>
@@ -274,7 +274,7 @@ export default function DepositFormScreen() {
                 onPress={handleSubmit}
                 disabled={isLoading}
                 style={{
-                    backgroundColor: COLORS.secondary,
+                    backgroundColor: COLORS.primary,
                     paddingVertical: 16,
                     borderRadius: 12,
                     alignItems: "center",

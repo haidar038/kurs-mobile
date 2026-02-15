@@ -1,3 +1,4 @@
+import { queryClient } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
 import type { Collector, Profile } from "@/types/database";
 import { Session, User } from "@supabase/supabase-js";
@@ -11,13 +12,15 @@ interface AuthContextType {
     user: User | null;
     profile: Profile | null;
     collector: Collector | null;
+    roles: UserRole[]; // All roles the user has in DB
     isLoading: boolean;
     desiredRole: UserRole | null; // The role the user IS ACTING AS currently
     signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
     signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
-    signOut: () => Promise<void>;
+    signOut: (redirectPath?: string) => Promise<void>;
     refreshProfile: () => Promise<void>;
     switchRole: (role: UserRole) => void;
+    hasRole: (role: UserRole) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [collector, setCollector] = useState<Collector | null>(null);
+    const [roles, setRoles] = useState<UserRole[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [desiredRole, setDesiredRole] = useState<UserRole | null>(null);
 
@@ -34,14 +38,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!error && data) {
             setProfile(data);
-            // Default desiredRole to their actual role if not set
+
+            // Fetch Multiple Roles from user_roles table
+            const { data: rolesData } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+            const userRoles = (rolesData?.map((r) => r.role) as UserRole[]) || [data.role || "user"];
+            setRoles(userRoles);
+
+            // Default desiredRole
             setDesiredRole((prev: UserRole | null) => {
-                if (!prev) return data.role || "user";
+                if (!prev) return (data.role as UserRole) || "user";
                 return prev;
             });
 
             // If collector, fetch collector data
-            if (data.role === "collector") {
+            if (userRoles.includes("collector")) {
                 const { data: collectorData } = await supabase.from("collectors").select("*").eq("user_id", userId).single();
                 setCollector(collectorData);
             }
@@ -108,13 +118,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: null };
     };
 
-    const signOut = async () => {
-        await supabase.auth.signOut();
-        setSession(null);
-        setProfile(null);
-        setCollector(null);
-        setDesiredRole(null);
-        router.replace("/(auth)/login");
+    const setOfflineStatus = async (userId: string) => {
+        try {
+            await supabase.from("collectors").update({ status: "offline" }).eq("user_id", userId);
+        } catch (error) {
+            console.error("Error setting offline status:", error);
+        }
+    };
+
+    const signOut = async (redirectPath?: string) => {
+        setIsLoading(true);
+        try {
+            const {
+                data: { user: currentUser },
+            } = await supabase.auth.getUser();
+            const userId = currentUser?.id;
+
+            // Log for debugging (visible to user in console)
+            console.log("Signing out user:", userId);
+
+            if (userId) {
+                // If it's a collector (check both profile role and collector state)
+                const isCollector = profile?.role === "collector" || collector !== null;
+                if (isCollector) {
+                    await supabase.from("collectors").update({ status: "offline" }).eq("user_id", userId);
+                    console.log("Set collector status to offline for:", userId);
+                }
+            }
+
+            await supabase.auth.signOut();
+            queryClient.clear();
+            setSession(null);
+            setProfile(null);
+            setCollector(null);
+            setRoles([]);
+            setDesiredRole(null);
+
+            // Redirect to the provided path or default login
+            if (redirectPath) {
+                router.replace(redirectPath as any);
+            } else {
+                router.replace("/(auth)/welcome");
+            }
+        } catch (error) {
+            console.error("Error during signOut:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const refreshProfile = async () => {
@@ -123,9 +173,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const switchRole = (role: UserRole) => {
+    const switchRole = async (role: UserRole) => {
+        // If switching from collector to user, set status to offline
+        if (desiredRole === "collector" && role === "user" && session?.user) {
+            await setOfflineStatus(session.user.id);
+            // Refresh collector status locally
+            const { data } = await supabase.from("collectors").select("*").eq("user_id", session.user.id).single();
+            setCollector(data);
+        }
         setDesiredRole(role);
-        // Navigation logic should be handled by the consumer or a side effect in layout
     };
 
     return (
@@ -135,6 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 user: session?.user ?? null,
                 profile,
                 collector,
+                roles,
                 isLoading,
                 desiredRole,
                 signIn,
@@ -142,6 +199,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 signOut,
                 refreshProfile,
                 switchRole,
+                hasRole: (role: UserRole) => roles.includes(role),
             }}
         >
             {children}

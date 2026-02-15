@@ -122,23 +122,29 @@ export default function HistoryScreen() {
     );
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-            <View style={{ padding: 20, paddingBottom: 0 }}>
-                <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Riwayat</Text>
-            </View>
-            <FlatList
-                data={history}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                contentContainerStyle={{ padding: 20 }}
-                refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
-                ListEmptyComponent={
-                    <View style={{ alignItems: "center", paddingTop: 60 }}>
-                        <Ionicons name="time-outline" size={48} color={COLORS.textSecondary} />
-                        <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Belum ada riwayat</Text>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.surface }} edges={["top"]}>
+            <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+                {/* Header Container */}
+                <View style={{ backgroundColor: COLORS.surface, borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
+                    <View style={{ padding: 20, paddingBottom: 12 }}>
+                        <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.text }}>Riwayat</Text>
                     </View>
-                }
-            />
+                </View>
+
+                <FlatList
+                    data={history}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderItem}
+                    contentContainerStyle={{ padding: 20 }}
+                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+                    ListEmptyComponent={
+                        <View style={{ alignItems: "center", paddingTop: 60 }}>
+                            <Ionicons name="time-outline" size={48} color={COLORS.textSecondary} />
+                            <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: 12 }}>Belum ada riwayat</Text>
+                        </View>
+                    }
+                />
+            </View>
         </SafeAreaView>
     );
 }

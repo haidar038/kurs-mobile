@@ -5,7 +5,8 @@ import { COLORS, PICKUP_STATUS_LABELS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useEffect } from "react";
+import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function CollectorJobDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,6 +22,7 @@ export default function CollectorJobDetailScreen() {
             if (error) throw error;
             return data as PickupRequest;
         },
+        refetchInterval: 5000,
     });
 
     const { data: collector } = useQuery({
@@ -36,11 +38,35 @@ export default function CollectorJobDetailScreen() {
     const { data: payment } = useQuery({
         queryKey: ["payment", id],
         queryFn: async () => {
-            const { data, error } = await supabase.from("payments").select("*").eq("pickup_request_id", id).eq("status", "completed").maybeSingle();
+            const { data, error } = await supabase.from("payments").select("*").eq("pickup_request_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle();
             if (error && error.code !== "PGRST116") throw error;
             return data;
         },
+        refetchInterval: 5000,
     });
+
+    useEffect(() => {
+        // Subscribe to realtime updates for payments
+        const channel = supabase
+            .channel(`payment-collector-${id}`)
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "payments",
+                    filter: `pickup_request_id=eq.${id}`,
+                },
+                () => {
+                    queryClient.invalidateQueries({ queryKey: ["payment", id] });
+                },
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [id, queryClient]);
 
     const acceptJobMutation = useMutation({
         mutationFn: async () => {
@@ -97,6 +123,11 @@ export default function CollectorJobDetailScreen() {
     };
 
     const handleCompletePickup = () => {
+        if (payment?.status !== "completed") {
+            Alert.alert("Belum Bayar", "Pelanggan belum melakukan pembayaran.");
+            return;
+        }
+
         Alert.alert("Selesaikan Pickup", "Konfirmasi bahwa pickup telah selesai?", [
             { text: "Batal", style: "cancel" },
             {
@@ -276,15 +307,20 @@ export default function CollectorJobDetailScreen() {
                         )}
                         <TouchableOpacity
                             onPress={handleCompletePickup}
-                            disabled={updateStatusMutation.isPending || !payment}
+                            disabled={updateStatusMutation.isPending || payment?.status !== "completed"}
                             style={{
-                                backgroundColor: !payment ? COLORS.textSecondary : COLORS.success,
+                                backgroundColor: payment?.status !== "completed" ? COLORS.textSecondary : COLORS.success,
                                 paddingVertical: 16,
                                 borderRadius: 12,
                                 alignItems: "center",
+                                opacity: payment?.status !== "completed" ? 0.6 : 1,
                             }}
                         >
-                            <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>Pickup Selesai</Text>
+                            {updateStatusMutation.isPending ? (
+                                <ActivityIndicator color="white" />
+                            ) : (
+                                <Text style={{ color: "white", fontSize: 16, fontWeight: "600" }}>{payment?.status === "completed" ? "Pickup Selesai" : "Menunggu Pembayaran"}</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
                 )}
