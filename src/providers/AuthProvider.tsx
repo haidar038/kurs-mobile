@@ -117,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log("Auth state change event:", event);
             if (!mounted) return;
 
             if (session?.user) {
@@ -126,9 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 // If we already have a profile and the event is just a USER_UPDATED (like push token update),
                 // we might not need to fetch the profile again from the 'profiles' table.
-                if (event === "USER_UPDATED" && profileRef.current) {
-                    console.log("User metadata updated, skipping profile re-fetch.");
-                } else {
+                if (!(event === "USER_UPDATED" && profileRef.current)) {
                     const profileData = await fetchProfile(session.user.id);
                     if (!profileData) {
                         console.error("Profile load failed on auth change. Logging out.");
@@ -222,18 +219,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setRoles([]);
             setDesiredRole(null);
 
-            // Redirect to the provided path or default login
+            // Redirect to the provided path or default welcome
             if (redirectPath) {
                 router.replace(redirectPath as any);
             } else {
-                router.replace("/(auth)/login");
+                router.replace("/(auth)/welcome");
             }
         } catch (error) {
             console.error("Error during signOut:", error);
             // Force safe state even if error
             setSession(null);
             setProfile(null);
-            router.replace("/(auth)/login");
+            router.replace("/(auth)/welcome");
         } finally {
             setIsLoading(false);
         }

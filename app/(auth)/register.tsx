@@ -1,9 +1,11 @@
 import { useAuth } from "@/providers/AuthProvider";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
@@ -57,6 +59,7 @@ export default function RegisterScreen() {
         keyboardType,
         autoCapitalize,
         autoComplete,
+        delay = 0,
     }: {
         label: string;
         icon: keyof typeof Ionicons.glyphMap;
@@ -70,15 +73,19 @@ export default function RegisterScreen() {
         keyboardType?: "default" | "email-address";
         autoCapitalize?: "none" | "sentences" | "words" | "characters";
         autoComplete?: "email" | "name" | "password" | "new-password";
+        delay?: number;
     }) => (
-        <View>
+        <Animated.View entering={FadeInUp.delay(delay).duration(400)}>
             <Text
                 style={{
-                    fontSize: 14,
-                    fontWeight: "500",
-                    color: COLORS.text,
+                    fontSize: 12,
+                    fontWeight: "800",
+                    color: COLORS.textSecondary,
                     marginBottom: 8,
-                    fontFamily: "PublicSans-Medium",
+                    marginLeft: 4,
+                    textTransform: "uppercase",
+                    letterSpacing: 1,
+                    fontFamily: "PublicSans-Bold",
                 }}
             >
                 {label}
@@ -88,21 +95,21 @@ export default function RegisterScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                     backgroundColor: COLORS.surface,
-                    borderWidth: 1,
+                    borderWidth: 1.5,
                     borderColor: COLORS.border,
-                    borderRadius: 12,
+                    borderRadius: 16,
+                    paddingHorizontal: 16,
                 }}
             >
-                <View style={{ paddingLeft: 14 }}>
-                    <Ionicons name={icon} size={20} color={COLORS.textSecondary} />
-                </View>
+                <Ionicons name={icon} size={20} color={COLORS.textSecondary} />
                 <TextInput
                     style={{
                         flex: 1,
-                        paddingHorizontal: 12,
                         paddingVertical: 14,
-                        fontSize: 16,
-                        fontFamily: "PublicSans-Regular",
+                        paddingHorizontal: 12,
+                        fontSize: 15,
+                        color: COLORS.text,
+                        fontFamily: "PublicSans-Medium",
                     }}
                     placeholder={placeholder}
                     placeholderTextColor={COLORS.textSecondary}
@@ -114,139 +121,180 @@ export default function RegisterScreen() {
                     autoComplete={autoComplete}
                 />
                 {showToggle && (
-                    <TouchableOpacity onPress={onToggle} style={{ paddingRight: 14, paddingVertical: 14 }}>
+                    <TouchableOpacity onPress={onToggle}>
                         <Ionicons name={isVisible ? "eye-off-outline" : "eye-outline"} size={20} color={COLORS.textSecondary} />
                     </TouchableOpacity>
                 )}
             </View>
-        </View>
+        </Animated.View>
     );
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-                <ScrollView
-                    contentContainerStyle={{
-                        flexGrow: 1,
-                        justifyContent: "center",
-                        paddingHorizontal: 24,
-                        paddingVertical: 48,
-                    }}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    {/* Back Button */}
-                    <TouchableOpacity
-                        onPress={() => {
-                            if (router.canGoBack()) {
-                                router.back();
-                            } else {
-                                router.replace("/(auth)/welcome");
-                            }
-                        }}
-                        style={{ position: "absolute", top: 10, left: 10, padding: 10, zIndex: 10 }}
-                    >
-                        <Ionicons name="arrow-back" size={24} color={COLORS.textSecondary} />
-                    </TouchableOpacity>
+        <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <LinearGradient colors={[COLORS.primary + "15", COLORS.background]} style={{ position: "absolute", top: 0, left: 0, right: 0, height: 300 }} />
 
-                    {/* Header */}
-                    <View style={{ alignItems: "center", marginBottom: 40 }}>
-                        <View
+            {/* Decorative Background Circles */}
+            <View style={{ position: "absolute", top: -20, right: -20, width: 180, height: 180, borderRadius: 90, backgroundColor: COLORS.lime + "10" }} />
+            <View style={{ position: "absolute", top: 100, left: -40, width: 120, height: 120, borderRadius: 60, backgroundColor: COLORS.primary + "05" }} />
+
+            <SafeAreaView style={{ flex: 1 }}>
+                <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+                    {/* Header Fixed - Back Button */}
+                    <View style={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 20 }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                router.replace("/(auth)/login");
+                            }}
                             style={{
-                                width: 64,
-                                height: 64,
-                                borderRadius: 20,
-                                backgroundColor: COLORS.primary + "15",
+                                width: 44,
+                                height: 44,
+                                borderRadius: 22,
+                                backgroundColor: COLORS.surface,
                                 alignItems: "center",
                                 justifyContent: "center",
-                                marginBottom: 16,
+                                borderWidth: 1,
+                                borderColor: COLORS.border,
                             }}
                         >
-                            <Ionicons name="person-add" size={32} color={COLORS.primary} />
-                        </View>
-                        <Text
-                            style={{
-                                fontSize: 28,
-                                fontWeight: "bold",
-                                color: COLORS.text,
-                                fontFamily: "PublicSans-Bold",
-                            }}
-                        >
-                            Daftar Akun
-                        </Text>
-                        <Text style={{ fontSize: 15, color: COLORS.textSecondary, marginTop: 8, textAlign: "center", fontFamily: "PublicSans-Regular" }}>Buat akun untuk mulai menggunakan KURS</Text>
-                    </View>
-
-                    {/* Form */}
-                    <View style={{ gap: 16 }}>
-                        <InputField label="Nama Lengkap" icon="person-outline" value={fullName} onChangeText={setFullName} placeholder="Nama lengkap" autoComplete="name" />
-
-                        <InputField label="Email" icon="mail-outline" value={email} onChangeText={setEmail} placeholder="email@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
-
-                        <InputField
-                            label="Password"
-                            icon="lock-closed-outline"
-                            value={password}
-                            onChangeText={setPassword}
-                            placeholder="Minimal 6 karakter"
-                            secureTextEntry
-                            showToggle
-                            isVisible={showPassword}
-                            onToggle={() => setShowPassword(!showPassword)}
-                            autoComplete="new-password"
-                        />
-
-                        <InputField
-                            label="Konfirmasi Password"
-                            icon="lock-closed-outline"
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                            placeholder="Ulangi password"
-                            secureTextEntry
-                            showToggle
-                            isVisible={showConfirmPassword}
-                            onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
-                            autoComplete="new-password"
-                        />
-
-                        <TouchableOpacity
-                            onPress={handleRegister}
-                            disabled={isLoading}
-                            style={{
-                                backgroundColor: COLORS.primary,
-                                paddingVertical: 16,
-                                borderRadius: 12,
-                                alignItems: "center",
-                                marginTop: 8,
-                                opacity: isLoading ? 0.7 : 1,
-                                shadowColor: COLORS.primary,
-                                shadowOffset: { width: 0, height: 4 },
-                                shadowOpacity: 0.3,
-                                shadowRadius: 8,
-                                elevation: 4,
-                            }}
-                        >
-                            {isLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: "white", fontSize: 16, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Daftar</Text>}
+                            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
                         </TouchableOpacity>
                     </View>
 
-                    {/* Footer */}
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            marginTop: 32,
-                            gap: 4,
+                    <ScrollView
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            paddingHorizontal: 24,
+                            paddingBottom: 40,
                         }}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
                     >
-                        <Text style={{ color: COLORS.textSecondary, fontFamily: "PublicSans-Regular" }}>Sudah punya akun?</Text>
-                        <Link href="/(auth)/login" asChild>
-                            <TouchableOpacity>
-                                <Text style={{ color: COLORS.primary, fontWeight: "600", fontFamily: "PublicSans-SemiBold" }}>Masuk</Text>
-                            </TouchableOpacity>
-                        </Link>
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+                        {/* Header Text */}
+                        <View style={{ marginBottom: 32, marginTop: 10 }}>
+                            <Text
+                                style={{
+                                    fontSize: 32,
+                                    fontWeight: "900",
+                                    color: COLORS.text,
+                                    fontFamily: "PublicSans-Bold",
+                                    letterSpacing: -1,
+                                    lineHeight: 38,
+                                }}
+                            >
+                                Mulai Aksi Nyata{"\n"}
+                                <Text style={{ color: COLORS.primary }}>
+                                    Sekarang! <Ionicons name="sparkles" size={24} color={COLORS.lime} />
+                                </Text>
+                            </Text>
+                            <Text
+                                style={{
+                                    fontSize: 15,
+                                    color: COLORS.textSecondary,
+                                    marginTop: 12,
+                                    fontFamily: "PublicSans-Regular",
+                                    lineHeight: 22,
+                                }}
+                            >
+                                Isi data diri kamu buat gabung komunitas Jaga Bumi.
+                            </Text>
+                        </View>
+
+                        {/* Form */}
+                        <View style={{ gap: 20 }}>
+                            <InputField label="Nama Lengkap" icon="person-outline" value={fullName} onChangeText={setFullName} placeholder="Cth: Dian Sastro" autoComplete="name" delay={100} />
+
+                            <InputField label="Email Address" icon="mail-outline" value={email} onChangeText={setEmail} placeholder="nama@email.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" delay={200} />
+
+                            <InputField
+                                label="Password"
+                                icon="lock-closed-outline"
+                                value={password}
+                                onChangeText={setPassword}
+                                placeholder="Minimal 6 karakter"
+                                secureTextEntry
+                                showToggle
+                                isVisible={showPassword}
+                                onToggle={() => setShowPassword(!showPassword)}
+                                autoComplete="new-password"
+                                delay={300}
+                            />
+
+                            <InputField
+                                label="Konfirmasi Password"
+                                icon="lock-closed-outline"
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                                placeholder="Ulangi password"
+                                secureTextEntry
+                                showToggle
+                                isVisible={showConfirmPassword}
+                                onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+                                autoComplete="new-password"
+                                delay={400}
+                            />
+
+                            <Animated.View entering={FadeInUp.delay(500).duration(400)} style={{ marginTop: 10 }}>
+                                <TouchableOpacity
+                                    onPress={handleRegister}
+                                    disabled={isLoading}
+                                    activeOpacity={0.8}
+                                    style={{
+                                        backgroundColor: COLORS.primary,
+                                        paddingVertical: 18,
+                                        borderRadius: 16,
+                                        alignItems: "center",
+                                        flexDirection: "row",
+                                        justifyContent: "center",
+                                        gap: 8,
+                                        shadowColor: COLORS.primary,
+                                        shadowOffset: { width: 0, height: 8 },
+                                        shadowOpacity: 0.3,
+                                        shadowRadius: 15,
+                                        elevation: 8,
+                                        opacity: isLoading ? 0.7 : 1,
+                                    }}
+                                >
+                                    {isLoading ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <>
+                                            <Text style={{ color: "white", fontSize: 17, fontWeight: "800", fontFamily: "PublicSans-Bold" }}>Buat Akun</Text>
+                                            <Ionicons name="arrow-forward" size={20} color="white" />
+                                        </>
+                                    )}
+                                </TouchableOpacity>
+
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        justifyContent: "center",
+                                        marginTop: 24,
+                                        gap: 6,
+                                    }}
+                                >
+                                    <Text style={{ color: COLORS.textSecondary, fontFamily: "PublicSans-Regular", fontSize: 15 }}>Udah punya akun?</Text>
+                                    <Link href="/(auth)/login" asChild>
+                                        <TouchableOpacity>
+                                            <Text
+                                                style={{
+                                                    color: COLORS.primary,
+                                                    fontWeight: "800",
+                                                    fontFamily: "PublicSans-Bold",
+                                                    fontSize: 15,
+                                                    textDecorationLine: "underline",
+                                                    textDecorationColor: COLORS.lime,
+                                                }}
+                                            >
+                                                Masuk Sini
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </Link>
+                                </View>
+                            </Animated.View>
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        </View>
     );
 }

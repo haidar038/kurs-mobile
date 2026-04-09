@@ -5,6 +5,7 @@ import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
+import { Platform } from "react-native";
 
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
@@ -28,6 +29,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     // Register push token when user is authenticated
     useEffect(() => {
+        if (Platform.OS === "web") return;
+
         const register = async () => {
             if (user?.id && !isRegistering.current) {
                 isRegistering.current = true;
@@ -44,9 +47,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         register();
     }, [user?.id]);
 
-    // Listen for notification taps (skip in Expo Go)
     useEffect(() => {
-        if (isExpoGo) return;
+        if (isExpoGo || Platform.OS === "web") return;
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
             const data = response.notification.request.content.data as {

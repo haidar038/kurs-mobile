@@ -1,70 +1,41 @@
 import LocationPickerModal from "@/components/LocationPickerModal";
+import { useLocationService } from "@/hooks/useLocationService";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { useAppStore } from "@/stores/useAppStore";
-import { COLORS, MINIMUM_FEE, WASTE_TYPES } from "@/utils/constants";
+import { COLORS, MINIMUM_FEE, VOLUME_OPTIONS, WASTE_TYPES } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PickupRequestScreen() {
     const router = useRouter();
     const { user } = useAuth();
     const { pickupDraft, updatePickupDraft, resetPickupDraft, currentLocation, setCurrentLocation } = useAppStore();
+    const { fetchLocation, isLoading: isLocationLoading } = useLocationService();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingLocation, setIsLoadingLocation] = useState(false);
     const [showMapPicker, setShowMapPicker] = useState(false);
 
+    // FIX: Stable ref pattern — fetchLocation reference changes between renders
+    // but we only want to call it once on mount.
+    const fetchLocationRef = useRef(fetchLocation);
     useEffect(() => {
-        getCurrentLocation();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchLocationRef.current = fetchLocation;
+    }, [fetchLocation]);
+
+    useEffect(() => {
+        fetchLocationRef.current();
     }, []);
 
-    const getCurrentLocation = async () => {
-        setIsLoadingLocation(true);
-        try {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== "granted") {
-                Alert.alert("Error", "Izin lokasi diperlukan untuk layanan pickup");
-                return;
-            }
-
-            const location = await Location.getCurrentPositionAsync({});
-            let formattedAddress = "";
-            try {
-                // Add a timeout race or just try-catch standard promise if expo doesn't support signal
-                // Actually, just try-catch the reverseGeocodeAsync
-                const [address] = await Location.reverseGeocodeAsync({
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                });
-
-                if (address) {
-                    formattedAddress = [address.street, address.district, address.city, address.region].filter(Boolean).join(", ");
-                }
-            } catch (geocodeError) {
-                console.log("Reverse geocode failed or timed out:", geocodeError);
-                // Fallback: User must enter address manually
-            }
-
-            setCurrentLocation({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                address: formattedAddress,
-            });
-
-            updatePickupDraft({ address: formattedAddress });
-        } catch (error) {
-            console.error("Location error:", error);
-        } finally {
-            setIsLoadingLocation(false);
+    // Sync draft address with current location if draft address is still empty.
+    useEffect(() => {
+        if (currentLocation?.address && !pickupDraft.address) {
+            updatePickupDraft({ address: currentLocation.address });
         }
-    };
+    }, [currentLocation, pickupDraft.address, updatePickupDraft]);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -89,9 +60,7 @@ export default function PickupRequestScreen() {
             return;
         }
 
-        const result = await ImagePicker.launchCameraAsync({
-            quality: 0.7,
-        });
+        const result = await ImagePicker.launchCameraAsync({ quality: 0.7 });
 
         if (!result.canceled) {
             updatePickupDraft({
@@ -108,15 +77,26 @@ export default function PickupRequestScreen() {
 
     const toggleWasteType = (typeId: string) => {
         const current = pickupDraft.wasteTypes;
-        if (current.includes(typeId)) {
-            updatePickupDraft({
-                wasteTypes: current.filter((t) => t !== typeId),
-            });
-        } else {
-            updatePickupDraft({
-                wasteTypes: [...current, typeId],
-            });
+        updatePickupDraft({
+            wasteTypes: current.includes(typeId) ? current.filter((t) => t !== typeId) : [...current, typeId],
+        });
+    };
+
+    const uploadPhoto = async (photoUri: string): Promise<string> => {
+        const fileName = `${user!.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const response = await fetch(photoUri);
+        const arrayBuffer = await response.arrayBuffer();
+
+        if (arrayBuffer.byteLength === 0) {
+            throw new Error("Gagal membaca file foto (0 bytes).");
         }
+
+        const { data, error } = await supabase.storage.from("pickup-photos").upload(fileName, arrayBuffer, { contentType: "image/jpeg", upsert: false });
+
+        if (error) throw error;
+
+        const { data: urlData } = supabase.storage.from("pickup-photos").getPublicUrl(data.path);
+        return urlData.publicUrl;
     };
 
     const handleSubmit = async () => {
@@ -124,12 +104,10 @@ export default function PickupRequestScreen() {
             Alert.alert("Error", "Tambahkan minimal 1 foto sampah");
             return;
         }
-
         if (pickupDraft.wasteTypes.length === 0) {
             Alert.alert("Error", "Pilih minimal 1 jenis sampah");
             return;
         }
-
         if (!pickupDraft.address) {
             Alert.alert("Error", "Alamat tidak boleh kosong");
             return;
@@ -137,52 +115,31 @@ export default function PickupRequestScreen() {
 
         setIsLoading(true);
 
+        // Track uploaded paths for cleanup on failure
+        const uploadedUrls: string[] = [];
+
         try {
-            // Upload photos to Supabase Storage
-            const uploadedPhotos: string[] = [];
-            for (const photoUri of pickupDraft.photos) {
-                const fileName = `${user?.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+            // FIX: Upload all photos concurrently instead of sequentially.
+            // Sequential uploads (for...of) mean 5 photos take 5x as long.
+            // Promise.all uploads them in parallel and throws if any one fails.
+            const results = await Promise.all(pickupDraft.photos.map(uploadPhoto));
+            uploadedUrls.push(...results);
 
-                console.log("Preparing to upload:", photoUri);
-                // Use ArrayBuffer instead of Blob for better RN compatibility on Android
-                const response = await fetch(photoUri);
-                const arrayBuffer = await response.arrayBuffer();
-
-                console.log(`File size: ${arrayBuffer.byteLength} bytes`);
-
-                if (arrayBuffer.byteLength === 0) {
-                    throw new Error("Gagal membaca file foto (0 bytes).");
-                }
-
-                const { data, error } = await supabase.storage.from("pickup-photos").upload(fileName, arrayBuffer, {
-                    contentType: "image/jpeg",
-                    upsert: false,
-                });
-
-                if (error) {
-                    console.error("Supabase storage upload error:", error);
-                    throw error;
-                }
-
-                const { data: urlData } = supabase.storage.from("pickup-photos").getPublicUrl(data.path);
-                uploadedPhotos.push(urlData.publicUrl);
-            }
-
-            // Create pickup request
             const { data, error } = await supabase
                 .from("pickup_requests")
                 .insert({
-                    user_id: user?.id,
+                    user_id: user!.id, // FIX: user is guaranteed in (app) group; use ! not ?.id
                     location: {
                         type: "Point",
                         coordinates: [currentLocation?.longitude ?? 0, currentLocation?.latitude ?? 0],
                     },
                     address: pickupDraft.address,
                     waste_types: pickupDraft.wasteTypes,
-                    photos: uploadedPhotos,
+                    photos: uploadedUrls,
                     notes: pickupDraft.notes || null,
                     scheduled_at: pickupDraft.scheduledAt?.toISOString() || null,
-                    fee: MINIMUM_FEE,
+                    volume_estimate: pickupDraft.volumeEstimate,
+                    fee: VOLUME_OPTIONS.find((v) => v.id === pickupDraft.volumeEstimate)?.fee || MINIMUM_FEE,
                 })
                 .select()
                 .single();
@@ -197,6 +154,27 @@ export default function PickupRequestScreen() {
                 },
             ]);
         } catch (error: any) {
+            // FIX: Clean up any successfully uploaded files if the DB insert fails,
+            // so they don't become orphaned objects in Storage.
+            if (uploadedUrls.length > 0) {
+                const paths = uploadedUrls
+                    .map((url) => {
+                        // Extract the storage path from the public URL
+                        const parts = url.split("/pickup-photos/");
+                        return parts[1] ?? "";
+                    })
+                    .filter(Boolean);
+
+                if (paths.length > 0) {
+                    await supabase.storage
+                        .from("pickup-photos")
+                        .remove(paths)
+                        .catch(() => {
+                            // Best-effort cleanup; don't surface this error to the user.
+                        });
+                }
+            }
+
             Alert.alert("Error", error.message || "Gagal mengirim permintaan");
         } finally {
             setIsLoading(false);
@@ -204,20 +182,11 @@ export default function PickupRequestScreen() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
+        <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 32 }}>
                 {/* Location */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: "600",
-                            color: COLORS.text,
-                            marginBottom: 8,
-                        }}
-                    >
-                        Alamat Pickup
-                    </Text>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 8 }}>Alamat Pickup</Text>
                     <View
                         style={{
                             backgroundColor: COLORS.surface,
@@ -230,16 +199,11 @@ export default function PickupRequestScreen() {
                         }}
                     >
                         <Ionicons name="location" size={20} color={COLORS.primary} />
-                        {isLoadingLocation ? (
+                        {isLocationLoading && !pickupDraft.address ? (
                             <ActivityIndicator style={{ marginLeft: 12 }} />
                         ) : (
                             <TextInput
-                                style={{
-                                    flex: 1,
-                                    marginLeft: 12,
-                                    fontSize: 14,
-                                    color: COLORS.text,
-                                }}
+                                style={{ flex: 1, marginLeft: 12, fontSize: 14, color: COLORS.text }}
                                 value={pickupDraft.address}
                                 onChangeText={(text) => updatePickupDraft({ address: text })}
                                 placeholder="Alamat pickup..."
@@ -248,7 +212,6 @@ export default function PickupRequestScreen() {
                         )}
                     </View>
 
-                    {/* Map picker button */}
                     <TouchableOpacity
                         onPress={() => setShowMapPicker(true)}
                         style={{
@@ -269,19 +232,13 @@ export default function PickupRequestScreen() {
 
                 {/* Photos */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: "600",
-                            color: COLORS.text,
-                            marginBottom: 8,
-                        }}
-                    >
-                        Foto Sampah ({pickupDraft.photos.length}/5)
-                    </Text>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 8 }}>Foto Sampah ({pickupDraft.photos.length}/5)</Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
                         {pickupDraft.photos.map((uri, index) => (
-                            <View key={index} style={{ position: "relative" }}>
+                            // FIX: Use uri as key instead of index — when the user removes a photo
+                            // from the middle of the list, index-based keys cause React to reuse
+                            // the wrong element and show a stale image.
+                            <View key={uri} style={{ position: "relative" }}>
                                 <Image source={{ uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
                                 <TouchableOpacity
                                     onPress={() => removePhoto(index)}
@@ -337,16 +294,7 @@ export default function PickupRequestScreen() {
 
                 {/* Waste Types */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: "600",
-                            color: COLORS.text,
-                            marginBottom: 8,
-                        }}
-                    >
-                        Jenis Sampah
-                    </Text>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 8 }}>Jenis Sampah</Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
                         {WASTE_TYPES.map((type) => {
                             const isSelected = pickupDraft.wasteTypes.includes(type.id);
@@ -383,16 +331,7 @@ export default function PickupRequestScreen() {
 
                 {/* Notes */}
                 <View style={{ marginBottom: 24 }}>
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: "600",
-                            color: COLORS.text,
-                            marginBottom: 8,
-                        }}
-                    >
-                        Catatan (opsional)
-                    </Text>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 8 }}>Catatan (opsional)</Text>
                     <TextInput
                         style={{
                             backgroundColor: COLORS.surface,
@@ -411,7 +350,40 @@ export default function PickupRequestScreen() {
                     />
                 </View>
 
-                {/* Fee */}
+                {/* Volume Estimate */}
+                <View style={{ marginBottom: 24 }}>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text, marginBottom: 8 }}>Estimasi Volume</Text>
+                    <View style={{ gap: 8 }}>
+                        {VOLUME_OPTIONS.map((option) => {
+                            const isSelected = pickupDraft.volumeEstimate === option.id;
+                            return (
+                                <TouchableOpacity
+                                    key={option.id}
+                                    onPress={() => updatePickupDraft({ volumeEstimate: option.id })}
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        padding: 16,
+                                        borderRadius: 12,
+                                        backgroundColor: isSelected ? COLORS.primary + "10" : COLORS.surface,
+                                        borderWidth: 1,
+                                        borderColor: isSelected ? COLORS.primary : COLORS.border,
+                                    }}
+                                >
+                                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: isSelected ? COLORS.primary : COLORS.background, alignItems: "center", justifyContent: "center" }}>
+                                        <Text style={{ fontSize: 20 }}>{option.icon}</Text>
+                                    </View>
+                                    <View style={{ flex: 1, marginLeft: 12 }}>
+                                        <Text style={{ fontSize: 14, fontWeight: "600", color: COLORS.text }}>{option.label}</Text>
+                                        <Text style={{ fontSize: 12, color: COLORS.textSecondary }}>{option.description}</Text>
+                                    </View>
+                                    <Text style={{ fontSize: 14, fontWeight: "600", color: isSelected ? COLORS.primary : COLORS.text }}>Rp {option.fee.toLocaleString("id-ID")}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                </View>
+
                 <View
                     style={{
                         backgroundColor: COLORS.primary + "10",
@@ -420,18 +392,9 @@ export default function PickupRequestScreen() {
                         marginBottom: 24,
                     }}
                 >
-                    <Text style={{ fontSize: 14, color: COLORS.textSecondary }}>Biaya Pickup</Text>
-                    <Text
-                        style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            color: COLORS.primary,
-                            marginTop: 4,
-                        }}
-                    >
-                        Rp {MINIMUM_FEE.toLocaleString("id-ID")}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 4 }}>*Biaya minimum, dapat berubah sesuai volume</Text>
+                    <Text style={{ fontSize: 14, color: COLORS.textSecondary }}>Total Biaya Estimasi</Text>
+                    <Text style={{ fontSize: 24, fontWeight: "bold", color: COLORS.primary, marginTop: 4 }}>Rp {(VOLUME_OPTIONS.find((v) => v.id === pickupDraft.volumeEstimate)?.fee || MINIMUM_FEE).toLocaleString("id-ID")}</Text>
+                    <Text style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 4 }}>*Biaya ini adalah estimasi berdasarkan pilihan volume Anda.</Text>
                 </View>
 
                 {/* Submit */}
@@ -466,6 +429,6 @@ export default function PickupRequestScreen() {
                     }}
                 />
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }

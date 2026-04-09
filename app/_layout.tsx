@@ -1,11 +1,15 @@
+import { AnimatedSplashScreen } from "@/components/AnimatedSplashScreen";
 import "@/global.css";
 import { useAuth } from "@/providers/AuthProvider";
 import { Providers } from "@/providers/Providers";
-import { COLORS } from "@/utils/constants";
 import { Stack, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, View } from "react-native";
+
+// Prevent the native splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootLayoutNav() {
     const { session, isLoading, profile, signOut, hasRole } = useAuth();
@@ -72,7 +76,7 @@ function RootLayoutNav() {
 
     return (
         <>
-            <StatusBar style="dark" backgroundColor={COLORS.primary} translucent={false} />
+            <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="(auth)" />
                 <Stack.Screen name="(app)" />
@@ -84,8 +88,11 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+    const [isSplashComplete, setIsSplashComplete] = useState(false);
+
     return (
         <Providers>
+            {!isSplashComplete && <AnimatedSplashScreen onAnimationFinish={() => setIsSplashComplete(true)} />}
             <RootLayoutNav />
         </Providers>
     );

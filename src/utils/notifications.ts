@@ -14,7 +14,7 @@ function isExpoGo(): boolean {
  * notification handler. Skipped automatically inside Expo Go.
  */
 export function initNotificationHandler(): void {
-    if (isExpoGo()) return;
+    if (isExpoGo() || Platform.OS === "web") return;
 
     Notifications.setNotificationHandler({
         handleNotification: async () => ({
@@ -31,8 +31,8 @@ export function initNotificationHandler(): void {
  * Saves the token to the user's profile in Supabase.
  */
 export async function registerForPushNotifications(userId: string): Promise<string | null> {
-    if (isExpoGo()) {
-        console.log("Push notifications are not supported in Expo Go (SDK 53+). Use a development build.");
+    if (Platform.OS === "web" || isExpoGo()) {
+        console.log("Push notifications are not supported in Expo Go or Web.");
         return null;
     }
 
@@ -65,11 +65,9 @@ export async function registerForPushNotifications(userId: string): Promise<stri
     }
 
     // Resolve projectId from app config (required in bare / dev-build workflows)
-    // Resolve projectId from app config (required in bare / dev-build workflows)
     const projectId = Constants.expoConfig?.extra?.eas?.projectId as string | undefined;
 
     try {
-        console.log("Fetching Expo push token...");
         // Add a timeout to prevent infinite hanging if native module is stuck
         const tokenPromise = Notifications.getExpoPushTokenAsync({
             projectId: projectId ?? undefined,
@@ -81,25 +79,21 @@ export async function registerForPushNotifications(userId: string): Promise<stri
 
         const tokenData = await Promise.race([tokenPromise, timeoutPromise]) as Notifications.ExpoPushToken;
         const token = tokenData.data;
-        console.log("Push token received:", token);
 
         // Check current token in Supabase to avoid redundant updates
         const { data: { user } } = await supabase.auth.getUser();
         const currentToken = user?.user_metadata?.push_token;
 
         if (currentToken === token) {
-            console.log("Push token already up to date in Supabase.");
             return token;
         }
 
-        console.log("Updating push token in Supabase...");
         // Save token to user metadata (no extra DB column needed)
         const { error: updateError } = await supabase.auth.updateUser({
             data: { push_token: token },
         });
 
         if (updateError) throw updateError;
-        console.log("Push token successfully updated.");
 
         return token;
     } catch (error) {
@@ -123,7 +117,7 @@ export interface KursNotificationData {
  * Schedule a local notification (useful for testing or offline scenarios).
  */
 export async function scheduleLocalNotification(data: KursNotificationData): Promise<void> {
-    if (isExpoGo()) return;
+    if (Platform.OS === "web" || isExpoGo()) return;
 
     await Notifications.scheduleNotificationAsync({
         content: {
@@ -133,4 +127,16 @@ export async function scheduleLocalNotification(data: KursNotificationData): Pro
         },
         trigger: null, // immediate
     });
+}
+
+/**
+ * Get the current notification badge count.
+ */
+export async function getBadgeCount(): Promise<number> {
+    if (Platform.OS === "web" || isExpoGo()) return 0;
+    try {
+        return await Notifications.getBadgeCountAsync();
+    } catch {
+        return 0;
+    }
 }

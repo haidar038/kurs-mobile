@@ -8,10 +8,7 @@
         "scheme": "kurs",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.binaryverse.jagabumi"
-        },
+        "jsEngine": "hermes",
         "android": {
             "adaptiveIcon": {
                 "backgroundColor": "#E6F4FE",
@@ -23,7 +20,14 @@
             "edgeToEdgeEnabled": true,
             "predictiveBackGestureEnabled": false,
             "package": "com.binaryverse.jagabumi",
-            "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "POST_NOTIFICATIONS", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"]
+            "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "POST_NOTIFICATIONS", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION", "CAMERA", "android.permission.CAMERA"]
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.binaryverse.jagabumi",
+            "infoPlist": {
+                "NSCameraUsageDescription": "Jaga Bumi membutuhkan akses kamera untuk memindai sampah dan menganalisanya menggunakan AI."
+            }
         },
         "web": {
             "output": "static",
@@ -99,8 +103,9 @@
         "extra": {
             "router": {},
             "eas": {
-                "projectId": "23953bab-c7ef-403d-9085-b90f5a7cf5aa"
+                "projectId": "92a98d56-4410-435a-bb56-c537e12dc9be"
             }
-        }
+        },
+        "owner": "binary-verse"
     }
 }

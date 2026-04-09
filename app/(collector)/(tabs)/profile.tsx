@@ -131,13 +131,15 @@ export default function CollectorProfileScreen() {
 
                     {/* Menu Items */}
                     <View style={{ marginTop: 20 }}>
-                        <MenuItem icon="person-outline" label="Edit Profil" onPress={() => {}} />
+                        <MenuItem icon="person-outline" label="Edit Profil" onPress={() => router.push("/(app)/profile/edit" as any)} />
+                        <MenuItem icon="call-outline" label="Ubah Nomor HP" onPress={() => router.push("/(app)/profile/change-phone" as any)} />
+                        <MenuItem icon="lock-closed-outline" label="Ubah Password" onPress={() => router.push("/(app)/profile/change-password" as any)} />
                     </View>
 
                     <View style={{ marginTop: 20 }}>
-                        <MenuItem icon="help-circle-outline" label="Bantuan" onPress={() => {}} />
-                        <MenuItem icon="document-text-outline" label="Syarat & Ketentuan" onPress={() => {}} />
-                        <MenuItem icon="shield-checkmark-outline" label="Kebijakan Privasi" onPress={() => {}} />
+                        <MenuItem icon="help-circle-outline" label="Bantuan" onPress={() => router.push("/(app)/profile/help" as any)} />
+                        <MenuItem icon="document-text-outline" label="Syarat & Ketentuan" onPress={() => router.push("/(app)/profile/terms" as any)} />
+                        <MenuItem icon="shield-checkmark-outline" label="Kebijakan Privasi" onPress={() => router.push("/(app)/profile/privacy" as any)} />
                     </View>
 
                     <View style={{ marginTop: 20 }}>

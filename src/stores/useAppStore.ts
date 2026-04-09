@@ -27,6 +27,7 @@ interface AppState {
         address: string;
         notes: string;
         scheduledAt: Date | null;
+        volumeEstimate: string;
     };
     updatePickupDraft: (draft: Partial<AppState["pickupDraft"]>) => void;
     resetPickupDraft: () => void;
@@ -38,6 +39,7 @@ const initialPickupDraft = {
     address: "",
     notes: "",
     scheduledAt: null,
+    volumeEstimate: "small",
 };
 
 export const useAppStore = create<AppState>((set) => ({
