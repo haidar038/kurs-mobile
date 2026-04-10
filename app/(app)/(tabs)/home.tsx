@@ -77,7 +77,7 @@ export default function HomeScreen() {
                         style={{
                             backgroundColor: COLORS.primary,
                             borderRadius: 24,
-                            padding: 24,
+                            padding: 16,
                             position: "relative",
                             overflow: "hidden",
                             shadowColor: COLORS.primary,
@@ -101,8 +101,8 @@ export default function HomeScreen() {
                             </View>
 
                             <TouchableOpacity onPress={() => router.push("/(app)/wallet" as any)} style={{ flexDirection: "row", gap: 12 }}>
-                                <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 20, padding: 16, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.1)" }}>
-                                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.lime, alignItems: "center", justifyContent: "center" }}>
+                                <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 12, padding: 16, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.1)" }}>
+                                    <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: COLORS.lime, alignItems: "center", justifyContent: "center" }}>
                                         <Ionicons name="wallet" size={20} color={COLORS.primary} />
                                     </View>
                                     <View>
@@ -110,8 +110,8 @@ export default function HomeScreen() {
                                         <Text style={{ fontSize: 18, color: "white", fontFamily: "PublicSans-Bold" }}>{stats.points.toLocaleString("id-ID")}</Text>
                                     </View>
                                 </View>
-                                <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 20, padding: 16, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.1)" }}>
-                                    <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "rgba(0,0,0,0.2)", alignItems: "center", justifyContent: "center" }}>
+                                <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 12, padding: 16, flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.1)" }}>
+                                    <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: "rgba(0,0,0,0.2)", alignItems: "center", justifyContent: "center" }}>
                                         <Ionicons name="leaf" size={20} color={COLORS.lime} />
                                     </View>
                                     <View>
@@ -184,7 +184,7 @@ export default function HomeScreen() {
                     {/* 3. MAIN MENU GRID */}
                     <View style={{ marginBottom: 24 }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16 }}>
-                            <Text style={{ fontSize: 18, fontFamily: "PublicSans-Bold", color: COLORS.text }}>Mau ngapain?</Text>
+                            <Text style={{ fontSize: 16, fontFamily: "PublicSans-Bold", color: COLORS.text }}>Mau ngapain?</Text>
                         </View>
 
                         <View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
@@ -195,7 +195,7 @@ export default function HomeScreen() {
                                     flex: 1,
                                     height: 120,
                                     backgroundColor: "rgba(225, 255, 0, 0.1)",
-                                    borderRadius: 24,
+                                    borderRadius: 16,
                                     padding: 16,
                                     justifyContent: "space-between",
                                     borderWidth: 2,
@@ -218,7 +218,7 @@ export default function HomeScreen() {
                                     flex: 1,
                                     height: 120,
                                     backgroundColor: COLORS.surface,
-                                    borderRadius: 24,
+                                    borderRadius: 16,
                                     padding: 16,
                                     justifyContent: "space-between",
                                     borderWidth: 1,
@@ -242,7 +242,7 @@ export default function HomeScreen() {
                                     flex: 1,
                                     height: 120,
                                     backgroundColor: COLORS.surface,
-                                    borderRadius: 24,
+                                    borderRadius: 16,
                                     padding: 16,
                                     justifyContent: "space-between",
                                     borderWidth: 1,
@@ -265,7 +265,7 @@ export default function HomeScreen() {
                                     flex: 1,
                                     height: 120,
                                     backgroundColor: COLORS.surface,
-                                    borderRadius: 24,
+                                    borderRadius: 16,
                                     padding: 16,
                                     justifyContent: "space-between",
                                     borderWidth: 1,
@@ -282,39 +282,15 @@ export default function HomeScreen() {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-                            {/* Education */}
-                            <TouchableOpacity
-                                style={{
-                                    flex: 1,
-                                    height: 120,
-                                    backgroundColor: COLORS.surface,
-                                    borderRadius: 24,
-                                    padding: 16,
-                                    justifyContent: "space-between",
-                                    borderWidth: 1,
-                                    borderColor: COLORS.border,
-                                }}
-                            >
-                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "#F5F3FF", alignItems: "center", justifyContent: "center" }}>
-                                    <Ionicons name="book-outline" size={20} color={COLORS.primary} />
-                                </View>
-                                <View>
-                                    <Text style={{ fontSize: 10, color: COLORS.textSecondary, fontFamily: "PublicSans-SemiBold" }}>Cari Tau</Text>
-                                    <Text style={{ fontSize: 16, fontFamily: "PublicSans-Bold", color: COLORS.text }}>Panduan</Text>
-                                </View>
-                            </TouchableOpacity>
-                            {/* Empty space to maintain layout if needed, or remove if not */}
-                            <View style={{ flex: 1 }} />
-                        </View>
+                        
                     </View>
 
                     {/* 4. CONTENT FEED */}
                     <View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                            <Text style={{ fontSize: 18, fontFamily: "PublicSans-Bold", color: COLORS.text }}>Baca-baca Dulu</Text>
+                            <Text style={{ fontSize: 16, fontFamily: "PublicSans-Bold", color: COLORS.text }}>Baca-baca Dulu</Text>
                             <TouchableOpacity>
-                                <Text style={{ fontSize: 12, fontFamily: "PublicSans-Bold", color: COLORS.primary }}>Lihat Semua</Text>
+                                <Text style={{ fontSize: 16, fontFamily: "PublicSans-Bold", color: COLORS.primary }}>Lihat Semua</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -327,16 +303,16 @@ export default function HomeScreen() {
                                         style={{
                                             width: 240,
                                             backgroundColor: COLORS.surface,
-                                            borderRadius: 20,
+                                            borderRadius: 16,
                                             padding: 12,
                                             borderWidth: 1,
                                             borderColor: COLORS.border,
                                         }}
                                     >
-                                        <View style={{ width: "100%", height: 120, borderRadius: 12, backgroundColor: COLORS.background, marginBottom: 12, overflow: "hidden" }}>
+                                        <View style={{ width: "100%", height: 120, borderRadius: 8, backgroundColor: COLORS.background, marginBottom: 12, overflow: "hidden" }}>
                                             <Image source={{ uri: article.cover_image || "https://placehold.co/500x300" }} style={{ width: "100%", height: "100%" }} />
                                             <View style={{ position: "absolute", top: 8, left: 8, backgroundColor: "rgba(255,255,255,0.9)", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
-                                                <Text style={{ fontSize: 10, fontFamily: "PublicSans-Bold", color: COLORS.primary }}>{article.category || "Tips"}</Text>
+                                                <Text style={{ fontSize: 10, fontFamily: "PublicSans-Bold", color: COLORS.primary, textTransform: "capitalize" }}>{article.category || "Tips"}</Text>
                                             </View>
                                         </View>
                                         <Text style={{ fontSize: 14, fontFamily: "PublicSans-Bold", color: COLORS.text, marginBottom: 4 }} numberOfLines={2}>

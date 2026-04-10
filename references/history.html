@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Riwayat</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER fixed -->
+            <header class="pt-8 pb-4 px-6 bg-white z-10 sticky top-0 border-b border-gray-50">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-extrabold text-brand-dark">Riwayat Aksi</h1>
+                    <!-- Filter Button -->
+                    <button class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 transition">
+                        <i class="ph-bold ph-sliders-horizontal text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Monthly Summary Widget -->
+                <div class="bg-brand-dark rounded-2xl p-4 flex items-center justify-between text-white shadow-lg shadow-brand-purple/20">
+                    <div>
+                        <p class="text-xs text-gray-400 mb-1">Total Sampah Bulan Ini</p>
+                        <h2 class="text-2xl font-bold flex items-center gap-1">45.5 <span class="text-sm font-normal text-gray-400">kg</span></h2>
+                    </div>
+                    <div class="h-10 w-px bg-white/10 mx-2"></div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-400 mb-1">Poin Didapat</p>
+                        <h2 class="text-xl font-bold text-brand-lime flex items-center gap-1 justify-end">+450 <i class="ph-fill ph-coin"></i></h2>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs (Segmented Control) -->
+                <div class="flex p-1 bg-gray-100 rounded-xl mt-6">
+                    <button class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-brand-purple shadow-sm transition-all">Semua</button>
+                    <button class="flex-1 py-2 text-xs font-medium rounded-lg text-gray-500 hover:text-slate-700 transition-all">Pickup</button>
+                    <button class="flex-1 py-2 text-xs font-medium rounded-lg text-gray-500 hover:text-slate-700 transition-all">Setor</button>
+                </div>
+            </header>
+
+            <!-- LIST CONTENT -->
+            <main class="flex-1 px-6 pt-2 pb-24 overflow-y-auto no-scrollbar space-y-6">
+                <!-- Group: Hari Ini -->
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Hari Ini</h3>
+                    <div class="space-y-3">
+                        <!-- Item 1: Pickup (On Process) -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:border-brand-purple/30 transition group">
+                            <!-- Icon State: Process -->
+                            <div class="w-12 h-12 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center relative">
+                                <i class="ph-fill ph-truck text-xl"></i>
+                                <span class="absolute top-0 right-0 w-3 h-3 bg-yellow-400 border-2 border-white rounded-full animate-ping"></span>
+                            </div>
+
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-sm text-slate-800">Pickup Sampah</h4>
+                                    <span class="px-2 py-0.5 rounded-md bg-yellow-50 text-[10px] font-bold text-yellow-600 border border-yellow-100">Dijemput</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-0.5">Rumah (Jl. Mawar No. 4)</p>
+                                <div class="mt-2 flex items-center gap-2 text-xs font-medium text-slate-600">
+                                    <i class="ph-bold ph-clock text-brand-purple"></i>
+                                    Est. 14:30 WIB
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group: Kemarin -->
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Kemarin</h3>
+                    <div class="space-y-3">
+                        <!-- Item 2: Deposit (Completed) -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:border-brand-purple/30 transition">
+                            <!-- Icon State: Success -->
+                            <div class="w-12 h-12 rounded-xl bg-brand-light text-brand-purple flex items-center justify-center">
+                                <i class="ph-fill ph-recycle text-xl"></i>
+                            </div>
+
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-sm text-slate-800">Setor Bank Sampah</h4>
+                                    <span class="px-2 py-0.5 rounded-md bg-green-50 text-[10px] font-bold text-green-600 border border-green-100">Selesai</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-0.5">TPS 03, Kalumata</p>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-700">12.5 kg</span>
+                                    <span class="text-xs font-bold text-brand-lime bg-brand-dark/5 px-2 py-1 rounded-full">+125 Poin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 3: Pickup (Completed) -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:border-brand-purple/30 transition">
+                            <div class="w-12 h-12 rounded-xl bg-brand-light text-brand-purple flex items-center justify-center">
+                                <i class="ph-fill ph-truck text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-sm text-slate-800">Pickup Sampah</h4>
+                                    <span class="px-2 py-0.5 rounded-md bg-green-50 text-[10px] font-bold text-green-600 border border-green-100">Selesai</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-0.5">Rumah (Jl. Mawar No. 4)</p>
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span class="text-xs font-bold text-slate-700">8.0 kg</span>
+                                    <span class="text-xs font-bold text-brand-lime bg-brand-dark/5 px-2 py-1 rounded-full">+80 Poin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group: Minggu Lalu -->
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Minggu Lalu</h3>
+                    <!-- Item 4: Canceled -->
+                    <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 opacity-75 grayscale hover:grayscale-0 transition">
+                        <div class="w-12 h-12 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center">
+                            <i class="ph-fill ph-x-circle text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm text-gray-600">Pickup Sampah</h4>
+                                <span class="px-2 py-0.5 rounded-md bg-red-50 text-[10px] font-bold text-red-500 border border-red-100">Dibatalkan</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-0.5">Rumah (Jl. Mawar No. 4)</p>
+                            <p class="text-[10px] text-red-400 mt-2">Dibatalkan oleh Mitra Driver</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Bottom Navigation (Placeholder for Visual Context) -->
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center z-20">
+                <i class="ph-bold ph-house text-2xl text-gray-300"></i>
+                <div class="flex flex-col items-center gap-1 text-brand-purple">
+                    <i class="ph-fill ph-clock-counter-clockwise text-2xl"></i>
+                    <span class="text-[10px] font-bold">Riwayat</span>
+                </div>
+                <div class="w-12"></div>
+                <!-- Spacer for FAB -->
+                <i class="ph-bold ph-book-open text-2xl text-gray-300"></i>
+                <i class="ph-bold ph-user text-2xl text-gray-300"></i>
+            </nav>
+
+            <!-- FAB Placeholder -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-brand-dark rounded-full border-4 border-white shadow-xl flex items-center justify-center z-30">
+                <i class="ph-fill ph-map-trifold text-3xl text-brand-lime"></i>
+            </div>
+        </div>
+    </body>
+</html>

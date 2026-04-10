@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Artikel</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER -->
+            <header class="pt-8 pb-2 px-6 bg-white sticky top-0 z-20">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-brand-dark">Jelajah Ilmu 💡</h1>
+                        <p class="text-xs text-gray-400">Update wawasan lingkunganmu</p>
+                    </div>
+                    <!-- Search Button -->
+                    <button class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-brand-purple hover:bg-brand-purple/10 transition">
+                        <i class="ph-bold ph-magnifying-glass text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Category Pills (Horizontal Scroll) -->
+                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-4">
+                    <button class="whitespace-nowrap px-5 py-2 rounded-full bg-brand-purple text-white text-xs font-bold shadow-lg shadow-brand-purple/20">For You</button>
+                    <button class="whitespace-nowrap px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-500 text-xs font-bold hover:border-brand-purple hover:text-brand-purple transition">Tips & Trik</button>
+                    <button class="whitespace-nowrap px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-500 text-xs font-bold hover:border-brand-purple hover:text-brand-purple transition">Inovasi</button>
+                    <button class="whitespace-nowrap px-5 py-2 rounded-full bg-white border border-gray-200 text-gray-500 text-xs font-bold hover:border-brand-purple hover:text-brand-purple transition">Event</button>
+                </div>
+            </header>
+
+            <!-- CONTENT FEED -->
+            <main class="flex-1 px-6 pb-24 overflow-y-auto no-scrollbar space-y-6">
+                <!-- 1. HERO CARD (Trending) -->
+                <div class="relative w-full h-64 rounded-3xl overflow-hidden group cursor-pointer shadow-md">
+                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+
+                    <!-- Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-transparent to-transparent"></div>
+
+                    <!-- Content -->
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <span class="px-2 py-1 bg-brand-lime text-brand-dark text-[10px] font-bold rounded-md mb-2 inline-block">Lagi Rame 🔥</span>
+                        <h2 class="text-white font-bold text-xl leading-tight mb-2 line-clamp-2">Sulap Sampah Plastik Jadi Bahan Bakar, Emang Bisa?</h2>
+                        <div class="flex items-center gap-2 text-gray-300 text-[10px]">
+                            <span>5 min baca</span>
+                            <span>•</span>
+                            <span>12 Feb 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Title -->
+                <div class="flex justify-between items-end">
+                    <h3 class="font-bold text-lg text-brand-dark">Terbaru Hari Ini</h3>
+                    <a href="#" class="text-xs font-bold text-brand-purple">Lihat Semua</a>
+                </div>
+
+                <!-- 2. ARTICLE LIST (Compact Cards) -->
+                <div class="space-y-4">
+                    <!-- Article Item 1 -->
+                    <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex gap-4 hover:border-brand-purple/30 transition cursor-pointer group">
+                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-500 mb-1 block uppercase tracking-wider">Tips</span>
+                                <h4 class="font-bold text-sm text-slate-800 leading-snug line-clamp-2 group-hover:text-brand-purple transition">Panduan Memilah Sampah Organik & Anorganik di Rumah</h4>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-[10px] text-gray-400">3 min baca</span>
+                                <button class="text-gray-300 hover:text-brand-purple"><i class="ph-fill ph-bookmark-simple text-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Article Item 2 -->
+                    <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex gap-4 hover:border-brand-purple/30 transition cursor-pointer group">
+                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div>
+                                <span class="text-[10px] font-bold text-brand-purple mb-1 block uppercase tracking-wider">Event</span>
+                                <h4 class="font-bold text-sm text-slate-800 leading-snug line-clamp-2 group-hover:text-brand-purple transition">Workshop Daur Ulang Bareng Komunitas Jaga Bumi Ternate</h4>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-[10px] text-gray-400">Besok, 09:00 WIB</span>
+                                <button class="text-gray-300 hover:text-brand-purple"><i class="ph-fill ph-bookmark-simple text-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Article Item 3 -->
+                    <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex gap-4 hover:border-brand-purple/30 transition cursor-pointer group">
+                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between py-1">
+                            <div>
+                                <span class="text-[10px] font-bold text-red-500 mb-1 block uppercase tracking-wider">Isu Lingkungan</span>
+                                <h4 class="font-bold text-sm text-slate-800 leading-snug line-clamp-2 group-hover:text-brand-purple transition">Dampak Sampah Plastik Terhadap Laut Maluku Utara</h4>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-[10px] text-gray-400">7 min baca</span>
+                                <button class="text-gray-300 hover:text-brand-purple"><i class="ph-fill ph-bookmark-simple text-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Placeholder Bottom Nav -->
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center z-20">
+                <i class="ph-bold ph-house text-2xl text-gray-300"></i>
+                <i class="ph-bold ph-clock-counter-clockwise text-2xl text-gray-300"></i>
+                <div class="w-12"></div>
+                <div class="flex flex-col items-center gap-1 text-brand-purple">
+                    <i class="ph-fill ph-book-open text-2xl"></i>
+                    <span class="text-[10px] font-bold">Edukasi</span>
+                </div>
+                <i class="ph-bold ph-user text-2xl text-gray-300"></i>
+            </nav>
+
+            <!-- FAB Placeholder -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-brand-dark rounded-full border-4 border-white shadow-xl flex items-center justify-center z-30">
+                <i class="ph-fill ph-map-trifold text-3xl text-brand-lime"></i>
+            </div>
+        </div>
+    </body>
+</html>

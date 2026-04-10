@@ -1,7 +1,9 @@
 import { AnimatedSplashScreen } from "@/components/AnimatedSplashScreen";
+import "@/components/ui/CustomTouchableOpacity"; // Global TouchableOpacity activeOpacity
 import "@/global.css";
 import { useAuth } from "@/providers/AuthProvider";
 import { Providers } from "@/providers/Providers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -10,6 +12,8 @@ import { ActivityIndicator, Alert, View } from "react-native";
 
 // Prevent the native splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const SPLASH_SHOWN_KEY = "@splash_shown";
 
 function RootLayoutNav() {
     const { session, isLoading, profile, signOut, hasRole } = useAuth();
@@ -89,10 +93,44 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
     const [isSplashComplete, setIsSplashComplete] = useState(false);
+    const [isCheckingSplash, setIsCheckingSplash] = useState(true);
+
+    useEffect(() => {
+        checkSplashStatus();
+    }, []);
+
+    const checkSplashStatus = async () => {
+        try {
+            const hasShownSplash = await AsyncStorage.getItem(SPLASH_SHOWN_KEY);
+            if (hasShownSplash === "true") {
+                // Splash sudah pernah ditampilkan, skip
+                setIsSplashComplete(true);
+            }
+        } catch (error) {
+            console.error("Error checking splash status:", error);
+        } finally {
+            setIsCheckingSplash(false);
+        }
+    };
+
+    const handleSplashFinish = async () => {
+        try {
+            await AsyncStorage.setItem(SPLASH_SHOWN_KEY, "true");
+            setIsSplashComplete(true);
+        } catch (error) {
+            console.error("Error saving splash status:", error);
+            setIsSplashComplete(true);
+        }
+    };
+
+    // Show loading while checking splash status
+    if (isCheckingSplash) {
+        return null; // or a simple loading indicator
+    }
 
     return (
         <Providers>
-            {!isSplashComplete && <AnimatedSplashScreen onAnimationFinish={() => setIsSplashComplete(true)} />}
+            {!isSplashComplete && <AnimatedSplashScreen onAnimationFinish={handleSplashFinish} />}
             <RootLayoutNav />
         </Providers>
     );

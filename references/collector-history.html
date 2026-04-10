@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Riwayat Driver</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#121212", // Match Dashboard
+                                card: "#1E1E1E", // Match Dashboard
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            /* Timeline Line */
+            .timeline-line::before {
+                content: "";
+                position: absolute;
+                top: 24px;
+                bottom: -24px;
+                left: 20px; /* Adjust based on icon size */
+                width: 2px;
+                background-color: #333;
+                z-index: 0;
+            }
+            .last-item .timeline-line::before {
+                display: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <!-- Container (Dark Mode) -->
+        <div class="w-full max-w-md bg-brand-dark h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-900 sm:h-[90vh] text-white">
+            <!-- HEADER -->
+            <header class="pt-8 px-6 pb-4 bg-brand-dark/90 backdrop-blur-sm sticky top-0 z-20 border-b border-gray-800">
+                <h1 class="font-bold text-xl mb-4">Riwayat Pekerjaan</h1>
+
+                <!-- Summary Widget (New Feature) -->
+                <div class="flex gap-4 mb-2">
+                    <div class="flex-1 bg-brand-card rounded-2xl p-3 border border-gray-800">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Total Hari Ini</p>
+                        <p class="text-xl font-extrabold text-brand-lime">Rp 150.000</p>
+                    </div>
+                    <div class="flex-1 bg-brand-card rounded-2xl p-3 border border-gray-800">
+                        <p class="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Jarak Tempuh</p>
+                        <p class="text-xl font-extrabold text-white">12.5 <span class="text-sm text-gray-500 font-normal">km</span></p>
+                    </div>
+                </div>
+
+                <!-- Date Filter (Horizontal Scroll) -->
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pt-2">
+                    <button class="px-4 py-1.5 rounded-full bg-brand-purple text-white text-xs font-bold whitespace-nowrap">Semua</button>
+                    <button class="px-4 py-1.5 rounded-full bg-brand-card border border-gray-700 text-gray-400 text-xs font-bold whitespace-nowrap hover:border-brand-purple hover:text-brand-purple transition">Selesai</button>
+                    <button class="px-4 py-1.5 rounded-full bg-brand-card border border-gray-700 text-gray-400 text-xs font-bold whitespace-nowrap hover:border-brand-purple hover:text-brand-purple transition">Dibatalkan</button>
+                </div>
+            </header>
+
+            <!-- CONTENT LIST -->
+            <main class="flex-1 px-6 pt-4 pb-24 overflow-y-auto no-scrollbar">
+                <!-- Group: Hari Ini -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 sticky top-0 bg-brand-dark py-2 z-10">Hari Ini, 14 Feb</h3>
+
+                    <div class="space-y-0">
+                        <!-- Item 1 -->
+                        <div class="relative pl-12 pb-6 timeline-line group">
+                            <!-- Timeline Dot/Icon -->
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-brand-card border border-gray-700 flex items-center justify-center z-10 group-hover:border-brand-lime transition">
+                                <i class="ph-fill ph-check-circle text-brand-lime text-lg"></i>
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="bg-brand-card p-4 rounded-2xl border border-gray-800 hover:border-gray-600 transition cursor-pointer">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white">Jemputan Sasa</h4>
+                                        <p class="text-xs text-gray-400">15:30 • Sampah Plastik</p>
+                                    </div>
+                                    <span class="text-brand-lime font-extrabold text-sm">Rp 10.000</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-800">
+                                    <div class="flex items-center gap-1 text-[10px] text-gray-400 bg-black/30 px-2 py-1 rounded"><i class="ph-fill ph-map-pin"></i> 2.4 km</div>
+                                    <div class="flex items-center gap-1 text-[10px] text-gray-400 bg-black/30 px-2 py-1 rounded"><i class="ph-fill ph-star text-yellow-500"></i> 5.0</div>
+                                    <span class="ml-auto text-[10px] text-green-500 font-bold bg-green-500/10 px-2 py-1 rounded border border-green-500/20">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="relative pl-12 pb-6 timeline-line group">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-brand-card border border-gray-700 flex items-center justify-center z-10 group-hover:border-brand-lime transition">
+                                <i class="ph-fill ph-check-circle text-brand-lime text-lg"></i>
+                            </div>
+
+                            <div class="bg-brand-card p-4 rounded-2xl border border-gray-800 hover:border-gray-600 transition cursor-pointer">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white">Jemputan Gambesi</h4>
+                                        <p class="text-xs text-gray-400">14:15 • Elektronik</p>
+                                    </div>
+                                    <span class="text-brand-lime font-extrabold text-sm">Rp 50.000</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-800">
+                                    <div class="flex items-center gap-1 text-[10px] text-gray-400 bg-black/30 px-2 py-1 rounded"><i class="ph-fill ph-map-pin"></i> 5.1 km</div>
+                                    <span class="ml-auto text-[10px] text-green-500 font-bold bg-green-500/10 px-2 py-1 rounded border border-green-500/20">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group: Kemarin -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 sticky top-0 bg-brand-dark py-2 z-10">Kemarin, 13 Feb</h3>
+
+                    <div class="space-y-0">
+                        <!-- Item 3 (Canceled) -->
+                        <div class="relative pl-12 pb-6 timeline-line last-item group opacity-75 hover:opacity-100 transition">
+                            <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-brand-card border border-gray-700 flex items-center justify-center z-10">
+                                <i class="ph-fill ph-x-circle text-red-500 text-lg"></i>
+                            </div>
+
+                            <div class="bg-brand-card p-4 rounded-2xl border border-gray-800 hover:border-red-500/50 transition cursor-pointer">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-gray-400 line-through">Jemputan Ubo-Ubo</h4>
+                                        <p class="text-xs text-gray-500">10:00 • Batalkan</p>
+                                    </div>
+                                    <span class="text-gray-500 font-bold text-sm">Rp 0</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-800">
+                                    <span class="text-[10px] text-red-400 font-bold bg-red-500/10 px-2 py-1 rounded border border-red-500/20">Dibatalkan User</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- BOTTOM NAV (Driver Version) -->
+            <nav class="absolute bottom-0 w-full bg-brand-card border-t border-gray-800 px-6 py-4 flex justify-between items-center z-20">
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-squares-four text-2xl"></i>
+                    <span class="text-[10px] font-medium">Dashboard</span>
+                </div>
+                <!-- Active State -->
+                <div class="flex flex-col items-center gap-1 text-brand-lime">
+                    <i class="ph-fill ph-clock-counter-clockwise text-2xl"></i>
+                    <span class="text-[10px] font-bold">Riwayat</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-wallet text-2xl"></i>
+                    <span class="text-[10px] font-medium">Dompet</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-user text-2xl"></i>
+                    <span class="text-[10px] font-medium">Profil</span>
+                </div>
+            </nav>
+        </div>
+    </body>
+</html>

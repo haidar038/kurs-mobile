@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Pusat Bantuan</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                                green: "#25D366", // WA Color
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER -->
+            <header class="pt-8 px-6 pb-6 bg-brand-purple relative overflow-hidden">
+                <!-- Decor -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center gap-4 mb-4">
+                        <button onclick="history.back()" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-brand-purple transition">
+                            <i class="ph-bold ph-arrow-left text-lg"></i>
+                        </button>
+                        <h1 class="text-lg font-bold text-white">Pusat Bantuan</h1>
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-white mb-1">Halo, Darox! 👋</h2>
+                    <p class="text-purple-200 text-sm mb-4">Ada yang bisa kami bantu hari ini?</p>
+
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input
+                            type="text"
+                            placeholder="Cari masalahmu (cth: poin hilang)..."
+                            class="w-full pl-11 pr-4 py-3.5 bg-white rounded-2xl text-sm font-semibold text-slate-800 focus:ring-4 focus:ring-brand-lime/50 outline-none shadow-lg"
+                        />
+                    </div>
+                </div>
+            </header>
+
+            <!-- SCROLLABLE CONTENT -->
+            <main class="flex-1 px-6 pt-6 pb-24 overflow-y-auto no-scrollbar bg-gray-50 rounded-t-[30px] -mt-4 relative z-0">
+                <!-- 1. POPULAR TOPICS (FAQ) -->
+                <section class="mb-8">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Sering Ditanyakan</h3>
+                    <div class="space-y-3">
+                        <!-- FAQ Item -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center cursor-pointer hover:border-brand-purple transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                                    <i class="ph-fill ph-coin"></i>
+                                </div>
+                                <span class="text-sm font-bold text-slate-700">Cara tukar poin?</span>
+                            </div>
+                            <i class="ph-bold ph-caret-right text-gray-300 group-hover:text-brand-purple"></i>
+                        </div>
+                        <!-- FAQ Item -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center cursor-pointer hover:border-brand-purple transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                                    <i class="ph-fill ph-truck"></i>
+                                </div>
+                                <span class="text-sm font-bold text-slate-700">Driver belum sampai?</span>
+                            </div>
+                            <i class="ph-bold ph-caret-right text-gray-300 group-hover:text-brand-purple"></i>
+                        </div>
+                        <!-- FAQ Item -->
+                        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center cursor-pointer hover:border-brand-purple transition group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
+                                    <i class="ph-fill ph-lock-key"></i>
+                                </div>
+                                <span class="text-sm font-bold text-slate-700">Ganti Password</span>
+                            </div>
+                            <i class="ph-bold ph-caret-right text-gray-300 group-hover:text-brand-purple"></i>
+                        </div>
+                    </div>
+                    <button class="w-full mt-3 text-xs font-bold text-brand-purple hover:underline">Lihat semua topik</button>
+                </section>
+
+                <!-- 2. CONTACT CHANNELS -->
+                <section>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Masih Butuh Bantuan?</h3>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Live Chat (Primary) -->
+                        <button class="col-span-2 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:border-brand-purple hover:shadow-md transition text-left group relative overflow-hidden">
+                            <!-- CS Avatars -->
+                            <div class="flex -space-x-3">
+                                <img class="w-10 h-10 rounded-full border-2 border-white" src="https://api.dicebear.com/7.x/avataaars/svg?seed=CS1" alt="" />
+                                <img class="w-10 h-10 rounded-full border-2 border-white" src="https://api.dicebear.com/7.x/avataaars/svg?seed=CS2" alt="" />
+                                <div class="w-10 h-10 rounded-full border-2 border-white bg-green-400 flex items-center justify-center text-[10px] text-white font-bold pl-1">
+                                    <div class="w-2 h-2 bg-white rounded-full animate-pulse absolute top-1 right-1"></div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 z-10">
+                                <h4 class="font-bold text-sm text-brand-purple">Live Chat</h4>
+                                <p class="text-xs text-gray-400 mt-0.5">Biasanya membalas dalam 2 menit</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-purple group-hover:scale-110 transition">
+                                <i class="ph-fill ph-chat-circle-dots text-xl"></i>
+                            </div>
+                        </button>
+
+                        <!-- WhatsApp -->
+                        <button class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between h-28 hover:border-green-500 hover:shadow-md transition text-left group">
+                            <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition">
+                                <i class="ph-fill ph-whatsapp-logo text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-700">WhatsApp</h4>
+                                <p class="text-[10px] text-gray-400">Fast Response</p>
+                            </div>
+                        </button>
+
+                        <!-- Email -->
+                        <button class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between h-28 hover:border-blue-500 hover:shadow-md transition text-left group">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition">
+                                <i class="ph-fill ph-envelope-simple text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-700">Email</h4>
+                                <p class="text-[10px] text-gray-400">help@jagabumi.id</p>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+            </main>
+
+            <!-- 3. STICKY BOTTOM (Panduan) -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <button class="w-full bg-gray-50 text-slate-600 font-bold text-sm py-3.5 rounded-2xl border border-gray-200 hover:bg-gray-100 transition flex items-center justify-center gap-2 group">
+                    <i class="ph-bold ph-book-open"></i>
+                    Baca Panduan Pengguna (PDF)
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

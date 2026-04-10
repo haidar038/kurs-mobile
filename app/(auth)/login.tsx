@@ -2,13 +2,13 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import JagaBumiSecondary from "../../assets/images/jgbm-secondary.svg";
 
 export default function LoginScreen() {
     const { type } = useLocalSearchParams<{ type: string }>();
@@ -178,9 +178,10 @@ export default function LoginScreen() {
                                         shadowOpacity: 0.2,
                                         shadowRadius: 15,
                                         elevation: 8,
+                                        alignItems: "center",
                                     }}
                                 >
-                                    <Image source={require("../../assets/images/jgbm-secondary.svg")} style={{ width: "100%", height: "100%", borderRadius: 28 }} contentFit="contain" />
+                                    <JagaBumiSecondary width={70} height={70} />
                                 </View>
                             </Animated.View>
                             <Text

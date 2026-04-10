@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Fasilitas</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER & SEARCH -->
+            <header class="pt-8 px-6 pb-2 bg-white sticky top-0 z-20">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-brand-dark">Fasilitas 📍</h1>
+                        <p class="text-xs text-gray-400">Temukan titik setor terdekat</p>
+                    </div>
+                    <!-- Toggle Map/List View -->
+                    <button class="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center text-brand-purple hover:bg-brand-purple hover:text-white transition shadow-sm">
+                        <i class="ph-bold ph-map-trifold text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative mb-4">
+                    <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input
+                        type="text"
+                        placeholder="Cari TPS atau Bank Sampah..."
+                        class="w-full pl-11 pr-4 py-3 bg-gray-50 rounded-2xl border border-transparent focus:bg-white focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 transition-all text-sm font-semibold outline-none placeholder-gray-400"
+                    />
+                </div>
+
+                <!-- Filters -->
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <button class="whitespace-nowrap px-4 py-2 rounded-xl bg-brand-dark text-white text-xs font-bold shadow-md shadow-brand-dark/20 transition hover:scale-105">Semua</button>
+                    <button class="whitespace-nowrap px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-500 text-xs font-bold hover:border-brand-purple hover:text-brand-purple transition hover:scale-105">
+                        <i class="ph-fill ph-recycle inline-block mr-1 text-green-500"></i> Bank Sampah
+                    </button>
+                    <button class="whitespace-nowrap px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-500 text-xs font-bold hover:border-brand-purple hover:text-brand-purple transition hover:scale-105">
+                        <i class="ph-fill ph-trash inline-block mr-1 text-orange-500"></i> TPS
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT LIST -->
+            <main class="flex-1 px-6 pb-24 overflow-y-auto no-scrollbar space-y-4 pt-2">
+                <!-- MAP PREVIEW WIDGET (New Feature) -->
+                <div class="w-full h-32 bg-gray-200 rounded-3xl overflow-hidden relative group cursor-pointer border border-gray-100">
+                    <!-- Static Map Image Placeholder -->
+                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition" />
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <button class="bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-bold text-brand-dark shadow-lg flex items-center gap-2 group-hover:scale-105 transition">
+                            <i class="ph-fill ph-map-pin text-brand-purple"></i>
+                            Lihat Peta (3 Terdekat)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Daftar Lokasi</h3>
+                    <span class="text-[10px] text-brand-purple bg-brand-light px-2 py-1 rounded-md font-bold">GPS Aktif</span>
+                </div>
+
+                <!-- Item 1: Bank Sampah (Green Theme) -->
+                <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition group relative overflow-hidden">
+                    <div class="flex gap-4">
+                        <!-- Icon Box -->
+                        <div class="w-16 h-16 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center flex-shrink-0">
+                            <i class="ph-fill ph-recycle text-3xl"></i>
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm text-slate-800 truncate pr-2">Bank Sampah Taman Nukila</h4>
+                                <span class="text-xs font-extrabold text-brand-purple">7.7 km</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-0.5 truncate">Jl. Sultan Muhammad Iskandar Djabir</p>
+
+                            <!-- Tags Row -->
+                            <div class="flex items-center gap-2 mt-3">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-50 text-red-500 text-[10px] font-bold border border-red-100">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                                    Tutup
+                                </span>
+                                <span class="px-2 py-1 rounded-md bg-green-50 text-green-600 text-[10px] font-bold border border-green-100"> Organik & Plastik </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Button (Bottom Right) -->
+                    <button
+                        class="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-gray-50 text-brand-dark hover:bg-brand-purple hover:text-white transition flex items-center justify-center shadow-sm border border-gray-200 group-hover:border-brand-purple"
+                    >
+                        <i class="ph-fill ph-navigation-arrow text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Item 2: TPS (Orange Theme) -->
+                <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition group relative overflow-hidden">
+                    <div class="flex gap-4">
+                        <!-- Icon Box -->
+                        <div class="w-16 h-16 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center flex-shrink-0">
+                            <i class="ph-fill ph-trash text-3xl"></i>
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm text-slate-800 truncate pr-2">TPS Gambesi</h4>
+                                <span class="text-xs font-extrabold text-brand-dark">1.2 km</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-0.5 truncate">Buper Lancadika, Gambesi</p>
+
+                            <!-- Tags Row -->
+                            <div class="flex items-center gap-2 mt-3">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-green-50 text-green-600 text-[10px] font-bold border border-green-100">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                    Buka
+                                </span>
+                                <span class="text-[10px] text-gray-400 font-medium"> Sampai 17:00 </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Action Button -->
+                    <button
+                        class="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-lime text-brand-dark hover:bg-brand-purple hover:text-white transition flex items-center justify-center shadow-sm border border-brand-lime hover:border-brand-purple"
+                    >
+                        <i class="ph-fill ph-navigation-arrow text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Item 3: TPS (Orange Theme) -->
+                <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition group relative overflow-hidden">
+                    <div class="flex gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center flex-shrink-0">
+                            <i class="ph-fill ph-trash text-3xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm text-slate-800 truncate pr-2">TPS Kalumata</h4>
+                                <span class="text-xs font-extrabold text-brand-dark">4.0 km</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-0.5 truncate">Jl. Tugu Maku Gawene</p>
+                            <div class="flex items-center gap-2 mt-3">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-green-50 text-green-600 text-[10px] font-bold border border-green-100">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                                    Buka
+                                </span>
+                                <span class="text-[10px] text-gray-400 font-medium"> Sampai 17:00 </span>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-gray-50 text-brand-dark hover:bg-brand-purple hover:text-white transition flex items-center justify-center shadow-sm border border-gray-200 group-hover:border-brand-purple"
+                    >
+                        <i class="ph-fill ph-navigation-arrow text-lg"></i>
+                    </button>
+                </div>
+            </main>
+
+            <!-- Placeholder Bottom Nav -->
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center z-20">
+                <i class="ph-bold ph-house text-2xl text-gray-300"></i>
+                <i class="ph-bold ph-clock-counter-clockwise text-2xl text-gray-300"></i>
+                <!-- Active State for Fasilitas -->
+                <div class="relative -top-8 group cursor-pointer">
+                    <div class="absolute inset-0 bg-brand-purple rounded-full blur opacity-40 group-hover:opacity-60 transition"></div>
+                    <button class="relative w-16 h-16 bg-brand-dark rounded-full flex items-center justify-center text-white border-4 border-white shadow-xl transform transition group-hover:-translate-y-1">
+                        <i class="ph-fill ph-map-trifold text-3xl text-brand-lime"></i>
+                    </button>
+                </div>
+                <i class="ph-bold ph-book-open text-2xl text-gray-300"></i>
+                <i class="ph-bold ph-user text-2xl text-gray-300"></i>
+            </nav>
+        </div>
+    </body>
+</html>

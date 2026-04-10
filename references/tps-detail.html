@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Detail TPS</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                                orange: "#FF8A00", // Warna tema TPS
+                                danger: "#FF4D4D",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- 1. IMMERSIVE HEADER (Image Background) -->
+            <div class="h-64 w-full relative">
+                <!-- Gambar TPS yang bersih/rapi -->
+                <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover grayscale-[20%]" />
+                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70"></div>
+
+                <!-- Navigation Buttons -->
+                <div class="absolute top-8 left-6 right-6 flex justify-between items-center z-10">
+                    <button onclick="history.back()" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-brand-dark transition">
+                        <i class="ph-bold ph-arrow-left text-lg"></i>
+                    </button>
+                    <div class="flex gap-2">
+                        <!-- Tombol Report Issue (Khusus TPS) -->
+                        <button class="w-10 h-10 rounded-full bg-red-500/80 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-red-600 transition shadow-lg animate-pulse">
+                            <i class="ph-fill ph-warning text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. MAIN CONTENT SHEET -->
+            <main class="flex-1 bg-white -mt-10 rounded-t-[40px] relative z-0 px-6 pt-8 pb-32 overflow-y-auto no-scrollbar">
+                <!-- Title Section -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <!-- Badge TPS (Orange) -->
+                        <span class="px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-full border border-orange-200 uppercase tracking-wide"> <i class="ph-fill ph-trash inline-block mr-1"></i> TPS Resmi </span>
+                        <!-- Status Kapasitas (Fitur Baru) -->
+                        <div class="flex items-center gap-1 bg-green-100 px-2 py-1 rounded-lg border border-green-200">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span class="text-[10px] font-bold text-green-700">Tersedia</span>
+                        </div>
+                    </div>
+
+                    <h1 class="text-2xl font-extrabold text-brand-dark leading-tight mb-2">TPS Gambesi</h1>
+                    <p class="text-sm text-gray-500 flex items-start gap-1.5">
+                        <i class="ph-fill ph-map-pin text-brand-orange mt-0.5"></i>
+                        Buper Lancadika, Gambesi, Ternate Selatan
+                    </p>
+                </div>
+
+                <div class="w-full h-px bg-gray-100 mb-6"></div>
+
+                <!-- Ketentuan Pembuangan -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-bold text-brand-dark mb-3">Ketentuan Sampah</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Allowed -->
+                        <div class="bg-gray-50 p-3 rounded-2xl border border-gray-100 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-green-600 shadow-sm">
+                                <i class="ph-fill ph-check-circle text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase">Boleh</p>
+                                <p class="text-xs font-bold text-slate-700">Rumah Tangga</p>
+                            </div>
+                        </div>
+                        <!-- Prohibited -->
+                        <div class="bg-red-50 p-3 rounded-2xl border border-red-100 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm">
+                                <i class="ph-fill ph-prohibit text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-red-400 font-bold uppercase">Dilarang!</p>
+                                <p class="text-xs font-bold text-red-700">Limbah B3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operational Hours -->
+                <div class="bg-orange-50/50 rounded-2xl p-4 border border-orange-100 mb-6">
+                    <div
+                        class="flex justify-between items-center mb-0 cursor-pointer"
+                        onclick="
+                            document.getElementById('schedule').classList.toggle('hidden');
+                            document.getElementById('arrow').classList.toggle('rotate-180');
+                        "
+                    >
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-brand-orange">
+                                <i class="ph-fill ph-clock text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Status Hari Ini</p>
+                                <p class="text-sm font-bold text-green-600 flex items-center gap-1">
+                                    Buka
+                                    <span class="text-xs font-normal text-gray-500">• Tutup 17:00</span>
+                                </p>
+                            </div>
+                        </div>
+                        <i id="arrow" class="ph-bold ph-caret-down text-gray-400 transition-transform duration-300"></i>
+                    </div>
+
+                    <!-- Hidden Schedule -->
+                    <div id="schedule" class="hidden mt-4 pt-4 border-t border-orange-200 space-y-2">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Senin - Sabtu</span>
+                            <span class="font-bold">08:00 - 17:00</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>Minggu</span>
+                            <span class="font-bold">08:00 - 12:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <h3 class="text-sm font-bold text-brand-dark mb-2">Info Petugas</h3>
+                    <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Petugas1" alt="Petugas" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Pak Ahmad</p>
+                            <p class="text-[10px] text-gray-400">Koordinator TPS</p>
+                        </div>
+                        <button class="ml-auto w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
+                            <i class="ph-fill ph-whatsapp-logo"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 3. STICKY ACTION BAR -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 pb-6 z-20 flex gap-3 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <!-- Navigation Button (Primary for TPS) -->
+                <button class="flex-[2] bg-brand-dark text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-brand-dark/20 hover:bg-slate-800 transition flex items-center justify-center gap-2 group">
+                    <i class="ph-bold ph-navigation-arrow text-xl group-hover:-rotate-45 transition-transform text-brand-lime"></i>
+                    Navigasi Ke Sini
+                </button>
+
+                <!-- Report Button (Unique Gen Z Feature) -->
+                <button class="flex-1 bg-red-50 border-2 border-red-100 text-red-500 font-bold py-3.5 rounded-2xl hover:bg-red-100 transition flex items-center justify-center gap-2 flex-col leading-none group">
+                    <i class="ph-fill ph-warning-circle text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[10px]">Lapor Penuh</span>
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

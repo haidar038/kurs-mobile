@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - AI Scanner V2</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                                teal: "#00F0FF",
+                            },
+                        },
+                        animation: {
+                            "scan-laser": "scanLaser 2s linear infinite",
+                            "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                        },
+                        keyframes: {
+                            scanLaser: {
+                                "0%": { top: "0%", opacity: "0" },
+                                "10%": { opacity: "1", boxShadow: "0 0 20px #CCFF00" },
+                                "90%": { opacity: "1", boxShadow: "0 0 20px #CCFF00" },
+                                "100%": { top: "100%", opacity: "0" },
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .shutter-btn {
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(4px);
+                border: 4px solid white;
+            }
+            .shutter-inner {
+                background: white;
+                transition: all 0.2s;
+            }
+            .shutter-btn:active .shutter-inner {
+                transform: scale(0.9);
+                background: #ccff00;
+            }
+
+            /* Chart CSS */
+            .pie-chart {
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                background: conic-gradient(#ccff00 0% 85%, #6a0dad 85% 95%, #e5e7eb 95% 100%);
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pie-chart::after {
+                content: "";
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                background: white;
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-black h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-900 sm:h-[90vh]">
+            <!-- ========================================== -->
+            <!-- VIEW 1: CAMERA & SCANNING (Initial State)  -->
+            <!-- ========================================== -->
+            <section id="camera-view" class="absolute inset-0 z-10 flex flex-col transition-opacity duration-500">
+                <!-- Camera Feed (Simulated) -->
+                <div class="absolute inset-0 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover opacity-60" />
+
+                    <!-- Overlay Grid (Iron Man Style) -->
+                    <div
+                        class="absolute inset-0 opacity-20 pointer-events-none"
+                        style="background-image: linear-gradient(#ccff00 1px, transparent 1px), linear-gradient(90deg, #ccff00 1px, transparent 1px); background-size: 80px 80px"
+                    ></div>
+                </div>
+
+                <!-- SCANNING ANIMATION (Hidden by default) -->
+                <div id="scan-laser" class="absolute inset-0 z-20 hidden">
+                    <div class="w-full h-1 bg-brand-lime absolute animate-scan-laser"></div>
+                    <div class="absolute inset-0 bg-brand-lime/10 animate-pulse"></div>
+
+                    <!-- Center Status -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <div class="bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-brand-lime/30 flex flex-col items-center gap-2">
+                            <i class="ph-bold ph-aperture text-2xl text-brand-lime animate-spin"></i>
+                            <span class="text-brand-lime font-mono text-xs tracking-widest uppercase">Analyzing...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Controls -->
+                <div class="absolute top-0 w-full p-6 pt-8 z-30 flex justify-between items-center text-white">
+                    <button onclick="history.back()" class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition">
+                        <i class="ph-bold ph-x text-lg"></i>
+                    </button>
+                    <div class="bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-lime animate-pulse"></span>
+                        <span class="text-[10px] font-bold tracking-widest uppercase">AI Enabled</span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition">
+                        <i class="ph-fill ph-lightning text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Bottom Shutter Controls -->
+                <div id="camera-controls" class="absolute bottom-0 w-full p-8 pb-12 z-30 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
+                    <button class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition">
+                        <i class="ph-fill ph-image text-2xl"></i>
+                    </button>
+
+                    <!-- Shutter Button -->
+                    <button onclick="startScan()" class="w-20 h-20 rounded-full shutter-btn flex items-center justify-center shadow-lg transform active:scale-95 transition">
+                        <div class="w-16 h-16 rounded-full shutter-inner"></div>
+                    </button>
+
+                    <button class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition">
+                        <i class="ph-fill ph-arrows-clockwise text-2xl"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- VIEW 2: RESULT & DETAILS (Hidden Initial)  -->
+            <!-- ========================================== -->
+            <section id="result-view" class="absolute inset-0 z-20 bg-gray-50 flex flex-col translate-y-full transition-transform duration-500 overflow-hidden">
+                <!-- Result Header Image (Separate from content so it's not covered) -->
+                <div class="h-72 w-full relative shrink-0 bg-gray-900">
+                    <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
+
+                    <!-- Nav -->
+                    <div class="absolute top-8 left-6 right-6 flex justify-between items-center">
+                        <button onclick="resetScan()" class="px-4 py-2 rounded-full bg-black/50 backdrop-blur-md text-white text-xs font-bold flex items-center gap-2 hover:bg-black/70 transition">
+                            <i class="ph-bold ph-camera"></i> Foto Ulang
+                        </button>
+                        <button class="w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition">
+                            <i class="ph-bold ph-share-network"></i>
+                        </button>
+                    </div>
+
+                    <!-- Confidence Badge -->
+                    <div class="absolute bottom-6 left-6 flex gap-2">
+                        <div class="bg-brand-lime/90 backdrop-blur text-brand-dark px-3 py-1 rounded-lg text-xs font-bold shadow-lg flex items-center gap-1">
+                            <i class="ph-fill ph-check-circle"></i>
+                            98% Akurat
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scrollable Content Sheet -->
+                <div class="flex-1 bg-white -mt-4 rounded-t-[30px] relative px-6 pt-8 pb-24 overflow-y-auto no-scrollbar shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+                    <!-- Title & Category -->
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hasil Analisa</span>
+                                <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                <span class="text-[10px] font-bold text-brand-purple uppercase tracking-wider">High Value</span>
+                            </div>
+                            <h1 class="text-2xl font-extrabold text-brand-dark">Botol Plastik (PET)</h1>
+                            <p class="text-sm text-gray-500 mt-1">Polyethylene Terephthalate #1</p>
+                        </div>
+                        <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 border border-green-100">
+                            <i class="ph-fill ph-recycle text-3xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="p-3 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                            <i class="ph-fill ph-hourglass text-gray-400 text-lg mb-1"></i>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Terurai</p>
+                            <p class="text-sm font-extrabold text-red-500">450 Thn</p>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                            <i class="ph-fill ph-coin text-brand-purple text-lg mb-1"></i>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Estimasi</p>
+                            <p class="text-sm font-extrabold text-brand-purple">Rp 3.500</p>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                            <i class="ph-fill ph-leaf text-green-500 text-lg mb-1"></i>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Impact</p>
+                            <p class="text-sm font-extrabold text-green-600">-50g CO2</p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="flex items-center gap-5 mb-8 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="pie-chart shadow-md">
+                            <span class="absolute text-[10px] font-extrabold text-slate-700">Scan</span>
+                        </div>
+                        <div class="flex-1 space-y-1.5">
+                            <h3 class="text-xs font-bold text-slate-800 mb-2">Komposisi Sampah</h3>
+                            <div class="flex justify-between text-xs">
+                                <span class="flex items-center gap-1.5 text-gray-500"><span class="w-2 h-2 rounded-full bg-brand-lime"></span>Plastik Murni</span>
+                                <span class="font-bold">85%</span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="flex items-center gap-1.5 text-gray-500"><span class="w-2 h-2 rounded-full bg-brand-purple"></span>Label (PP)</span>
+                                <span class="font-bold">10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Guide -->
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Rekomendasi Penanganan</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-dark text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-lg shadow-brand-dark/20">1</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-brand-dark">Bersihkan & Keringkan</h4>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">Buang sisa cairan. Botol bersih bernilai jual lebih tinggi di Bank Sampah.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-dark text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-lg shadow-brand-dark/20">2</div>
+                            <div>
+                                <h4 class="text-sm font-bold text-brand-dark">Remas (Crush)</h4>
+                                <p class="text-xs text-gray-500 mt-1 leading-relaxed">Hemat ruang penyimpanan kamu hingga 60%.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spacer for sticky footer -->
+                    <div class="h-4"></div>
+                </div>
+
+                <!-- Sticky Action Footer -->
+                <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 pb-6 z-40 flex gap-3 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                    <button class="w-12 h-12 rounded-2xl border-2 border-red-50 text-red-500 flex items-center justify-center hover:bg-red-50 transition">
+                        <i class="ph-bold ph-trash-simple text-xl"></i>
+                    </button>
+                    <button class="flex-1 bg-brand-purple text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-brand-purple/30 hover:bg-purple-800 transition flex items-center justify-center gap-2 group active:scale-95">
+                        <i class="ph-bold ph-plus-circle"></i>
+                        Simpan ke Inventaris
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- SIMULATION SCRIPT -->
+        <script>
+            // Elements
+            const cameraView = document.getElementById("camera-view");
+            const resultView = document.getElementById("result-view");
+            const scanLaser = document.getElementById("scan-laser");
+            const controls = document.getElementById("camera-controls");
+
+            function startScan() {
+                // 1. Hide controls, Show Scanning Laser
+                controls.style.opacity = "0";
+                scanLaser.classList.remove("hidden");
+
+                // 2. Simulate AI Processing Time (3 seconds)
+                setTimeout(() => {
+                    // 3. Transition to Result View
+                    resultView.style.transform = "translateY(0)";
+
+                    // Reset Camera View State (in background)
+                    setTimeout(() => {
+                        scanLaser.classList.add("hidden");
+                        controls.style.opacity = "1";
+                    }, 500);
+                }, 3000);
+            }
+
+            function resetScan() {
+                // Slide result view down
+                resultView.style.transform = "translateY(100%)";
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Riwayat Deposit Staff</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER (Main Tab Style - No Back Button) -->
+            <header class="pt-8 px-6 pb-4 bg-white sticky top-0 z-20 border-b border-gray-50">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-brand-dark">Riwayat Setoran</h1>
+                        <p class="text-xs text-gray-400">Rekap transaksi masuk harian</p>
+                    </div>
+                    <!-- Filter Button -->
+                    <button class="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-slate-700 transition border border-gray-100">
+                        <i class="ph-bold ph-sliders-horizontal text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Daily Summary Widget -->
+                <div class="flex gap-3 mb-2">
+                    <div class="flex-1 bg-brand-light p-3 rounded-2xl border border-brand-purple/10 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-brand-purple shadow-sm">
+                            <i class="ph-fill ph-scales text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Total Berat</p>
+                            <p class="text-lg font-extrabold text-brand-dark">128 kg</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 bg-green-50 p-3 rounded-2xl border border-green-100 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-green-600 shadow-sm">
+                            <i class="ph-fill ph-receipt text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Transaksi</p>
+                            <p class="text-lg font-extrabold text-brand-dark">24</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENT LIST -->
+            <main class="flex-1 px-6 pt-4 pb-24 overflow-y-auto no-scrollbar space-y-4">
+                <div class="flex justify-between items-end">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Hari Ini, 18 Feb 2026</p>
+                    <button class="text-[10px] font-bold text-brand-purple hover:underline">Unduh Laporan PDF</button>
+                </div>
+
+                <!-- Card 1 -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:border-brand-purple/30 transition group relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex gap-3 items-center">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-10 h-10 rounded-full bg-gray-100 border border-white shadow-sm" />
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Darox</h4>
+                                <p class="text-[10px] text-gray-400 font-mono">ID: #MBR-8821</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-lg flex items-center gap-1"> <i class="ph-fill ph-check-circle"></i> Verified </span>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
+                                <i class="ph-fill ph-files"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Kertas & Kardus</p>
+                                <p class="text-[10px] text-gray-400">30 kg</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Poin</p>
+                            <p class="text-sm font-extrabold text-brand-lime px-2 py-0.5 bg-brand-dark rounded">+3.000</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-right">
+                        <span class="text-[10px] text-gray-300">21:19 WIT</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:border-brand-purple/30 transition group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex gap-3 items-center">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" class="w-10 h-10 rounded-full bg-gray-100 border border-white shadow-sm" />
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Sarah M.</h4>
+                                <p class="text-[10px] text-gray-400 font-mono">ID: #MBR-9902</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-lg flex items-center gap-1"> <i class="ph-fill ph-check-circle"></i> Verified </span>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <i class="ph-fill ph-bottle"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Plastik PET</p>
+                                <p class="text-[10px] text-gray-400">5.5 kg</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Poin</p>
+                            <p class="text-sm font-extrabold text-brand-lime px-2 py-0.5 bg-brand-dark rounded">+550</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-right">
+                        <span class="text-[10px] text-gray-300">20:45 WIT</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 (Older) -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm opacity-80">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex gap-3 items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">GS</div>
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">Guest (Non-Member)</h4>
+                                <p class="text-[10px] text-gray-400 font-mono">ID: -</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-gray-200 text-gray-500 flex items-center justify-center">
+                                <i class="ph-fill ph-trash"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-700">Campuran</p>
+                                <p class="text-[10px] text-gray-400">10 kg</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Poin</p>
+                            <p class="text-xs font-bold text-gray-400">0</p>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-right">
+                        <span class="text-[10px] text-gray-300">18:30 WIT</span>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Floating Print Button (Tetap ada untuk print report cepat) -->
+            <div class="absolute bottom-24 right-6 z-30">
+                <button class="w-14 h-14 bg-brand-purple text-white rounded-full shadow-lg shadow-brand-purple/40 flex items-center justify-center hover:scale-110 transition">
+                    <i class="ph-bold ph-printer text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- 3. BOTTOM NAV (Staff Version) -->
+            <nav class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <div class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple transition cursor-pointer">
+                    <i class="ph-bold ph-squares-four text-2xl"></i>
+                    <span class="text-[10px] font-medium">Dashboard</span>
+                </div>
+                <!-- Active State -->
+                <div class="flex flex-col items-center gap-1 text-brand-purple">
+                    <i class="ph-fill ph-list-dashes text-2xl"></i>
+                    <span class="text-[10px] font-bold">Riwayat</span>
+                </div>
+                <!-- Center Action (Manage) -->
+                <div class="relative -top-6 group cursor-pointer">
+                    <div class="absolute inset-0 bg-brand-purple rounded-full blur opacity-30 group-hover:opacity-50 transition"></div>
+                    <button class="relative w-14 h-14 bg-brand-dark rounded-full flex items-center justify-center text-white border-4 border-white shadow-xl transform transition group-hover:-translate-y-1">
+                        <i class="ph-bold ph-archive-box text-2xl text-white"></i>
+                    </button>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple transition cursor-pointer">
+                    <i class="ph-bold ph-users text-2xl"></i>
+                    <span class="text-[10px] font-medium">Nasabah</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple transition cursor-pointer">
+                    <i class="ph-bold ph-user text-2xl"></i>
+                    <span class="text-[10px] font-medium">Profil</span>
+                </div>
+            </nav>
+        </div>
+    </body>
+</html>

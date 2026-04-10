@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Dashboard</title>
+
+        <!-- Fonts: Plus Jakarta Sans -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons: Phosphor Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                dark: "#1A1A2E",
+                                lime: "#CCFF00",
+                                light: "#F4F1FA",
+                                gray: "#8E8E93",
+                            },
+                        },
+                        boxShadow: {
+                            glow: "0 0 20px rgba(106, 13, 173, 0.3)",
+                            float: "0 10px 30px -10px rgba(0, 0, 0, 0.1)",
+                            up: "0 -5px 20px rgba(0,0,0,0.05)", // Shadow untuk navbar
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .orbit-pattern {
+                background-image: radial-gradient(circle at 100% 0%, rgba(204, 255, 0, 0.15) 0%, transparent 25%), radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.1) 0%, transparent 25%);
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex justify-center min-h-screen font-sans text-slate-800">
+        <!-- Mobile Frame Container: Flex Column & Overflow Hidden -->
+        <div class="w-full max-w-md bg-white h-screen relative shadow-2xl sm:rounded-3xl sm:h-[90vh] sm:my-auto border-x border-gray-100 flex flex-col overflow-hidden">
+            <!-- SCROLLABLE AREA (Header + Main Content) -->
+            <div class="flex-1 overflow-y-auto no-scrollbar relative">
+                <!-- Header Section (Sticky inside scroll area) -->
+                <header class="pt-12 pb-4 px-6 bg-white sticky top-0 z-40 flex justify-between items-center bg-opacity-95 backdrop-blur-sm">
+                    <div class="flex items-center gap-2 cursor-pointer group">
+                        <div class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-purple">
+                            <i class="ph-fill ph-map-pin text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-brand-gray font-medium">Lokasi Kamu</p>
+                            <div class="flex items-center gap-1">
+                                <h2 class="text-sm font-bold text-slate-800 group-hover:text-brand-purple transition">Ternate, ID</h2>
+                                <i class="ph-bold ph-caret-down text-xs text-brand-purple"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="relative p-2 rounded-full hover:bg-brand-light transition">
+                        <i class="ph-bold ph-bell text-xl text-slate-700"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </header>
+
+                <!-- Main Content -->
+                <main class="pb-6 px-6 space-y-6">
+                    <!-- 1. HERO CARD -->
+                    <div class="w-full bg-brand-purple rounded-3xl p-6 text-white relative overflow-hidden shadow-glow orbit-pattern group transition-all duration-300 hover:scale-[1.02]">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 border-2 border-white/10 rounded-full"></div>
+                        <div class="absolute -right-4 -top-4 w-40 h-40 border-2 border-white/5 rounded-full"></div>
+
+                        <div class="relative z-10">
+                            <p class="text-sm font-medium text-purple-200 mb-1">Emisi Karbon Dihemat</p>
+                            <div class="flex items-end gap-2 mb-6">
+                                <h1 class="text-4xl font-extrabold tracking-tight">12<span class="text-2xl">kg</span> <span class="text-brand-lime">CO²</span></h1>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl flex-1 flex items-center gap-3 border border-white/5">
+                                    <div class="w-8 h-8 rounded-full bg-brand-lime text-brand-purple flex items-center justify-center">
+                                        <i class="ph-fill ph-star text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-purple-200">Poin</p>
+                                        <p class="font-bold">2.450</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl flex-1 flex items-center gap-3 border border-white/5">
+                                    <div class="w-8 h-8 rounded-full bg-purple-800 text-white flex items-center justify-center">
+                                        <i class="ph-fill ph-trash text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-purple-200">Disetor</p>
+                                        <p class="font-bold">23kg</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. ACTIVE ORDER WIDGET -->
+                    <div id="activeOrderCard" class="bg-white border border-gray-100 rounded-3xl p-5 shadow-float hidden animate-fade-in-up flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-lime opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-lime"></span>
+                                </span>
+                                <span class="text-[10px] font-extrabold text-brand-purple uppercase tracking-widest">Pickup Aktif</span>
+                            </div>
+                            <span class="text-[10px] font-medium px-2 py-0.5 bg-gray-50 border border-gray-100 rounded-full text-gray-400">#TRX-9921</span>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-14 h-14 bg-gray-200 rounded-2xl overflow-hidden border-2 border-white shadow-sm">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Driver" class="w-full h-full object-cover" />
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-brand-lime rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                    <i class="ph-fill ph-check text-[10px] text-brand-purple"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-base text-slate-800 leading-none mb-1">Mang Asep</h4>
+                                <p class="text-xs text-brand-gray font-medium">Viar Karya • B 1234 XYZ</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-black text-brand-purple">5 min</p>
+                                <p class="text-[10px] font-bold text-gray-300 uppercase">Estimasi</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 space-y-2">
+                            <div class="flex justify-between items-center text-[10px] font-bold uppercase tracking-tighter">
+                                <span class="text-brand-purple">Menuju Lokasi Kamu</span>
+                                <span class="text-gray-400">65%</span>
+                            </div>
+                            <div class="w-full bg-gray-50 rounded-full h-2 overflow-hidden border border-gray-100/50 p-0.5">
+                                <div class="bg-gradient-to-r from-brand-purple to-purple-400 h-full rounded-full transition-all duration-1000" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. MAIN MENU GRID -->
+                    <div>
+                        <div class="flex justify-between items-end mb-4">
+                            <h3 class="font-bold text-lg text-slate-800">Mau ngapain?</h3>
+                            <button onclick="toggleOrder()" class="text-[10px] px-2 py-1 bg-gray-100 rounded border text-gray-400 hover:text-brand-purple hover:border-brand-purple">Demo: Toggle Order</button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <button
+                                class="col-span-1 bg-brand-lime/10 border-2 border-brand-lime/50 p-5 rounded-3xl flex flex-col justify-between h-32 hover:bg-brand-lime hover:shadow-lg transition group text-left relative overflow-hidden"
+                            >
+                                <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-brand-lime/30 rounded-full blur-xl group-hover:bg-white/30"></div>
+                                <div class="w-10 h-10 bg-brand-lime rounded-full flex items-center justify-center text-brand-dark mb-2 group-hover:bg-white group-hover:text-brand-purple transition">
+                                    <i class="ph-bold ph-truck text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-semibold opacity-70 group-hover:text-brand-dark">Penuh?</span>
+                                    <span class="block text-lg font-extrabold text-brand-dark">Minta Pickup</span>
+                                </div>
+                            </button>
+
+                            <button class="bg-white border border-gray-100 p-5 rounded-3xl flex flex-col justify-between h-32 hover:border-brand-purple/30 hover:shadow-lg transition text-left group">
+                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mb-2 group-hover:scale-110 transition">
+                                    <i class="ph-bold ph-map-trifold text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-semibold text-gray-400 group-hover:text-brand-purple">Cari Lokasi</span>
+                                    <span class="block text-md font-bold text-slate-700">TPS Terdekat</span>
+                                </div>
+                            </button>
+
+                            <button class="bg-white border border-gray-100 p-5 rounded-3xl flex flex-col justify-between h-32 hover:border-brand-purple/30 hover:shadow-lg transition text-left group">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2 group-hover:scale-110 transition">
+                                    <i class="ph-bold ph-trophy text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-semibold text-gray-400 group-hover:text-brand-purple">5 Misi Baru</span>
+                                    <span class="block text-md font-bold text-slate-700">Misi & Reward</span>
+                                </div>
+                            </button>
+
+                            <button class="bg-white border border-gray-100 p-5 rounded-3xl flex flex-col justify-between h-32 hover:border-brand-purple/30 hover:shadow-lg transition text-left group">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-brand-purple mb-2 group-hover:scale-110 transition">
+                                    <i class="ph-bold ph-book-open text-xl"></i>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-semibold text-gray-400 group-hover:text-brand-purple">Edukasi</span>
+                                    <span class="block text-md font-bold text-slate-700">Panduan</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4. CONTENT FEED -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg text-slate-800">Baca-baca Dulu</h3>
+                            <a href="#" class="text-xs font-bold text-brand-purple">Lihat Semua</a>
+                        </div>
+
+                        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                            <div class="min-w-[240px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                                <div class="h-32 rounded-xl bg-gray-200 mb-3 overflow-hidden relative">
+                                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover" />
+                                    <span class="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-bold text-brand-purple">Tips</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-800 mb-1 leading-snug">Cara memilah sampah plastik yang benar</h4>
+                                <p class="text-[10px] text-gray-400">5 menit baca</p>
+                            </div>
+                            <div class="min-w-[240px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                                <div class="h-32 rounded-xl bg-gray-200 mb-3 overflow-hidden relative">
+                                    <img src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover" />
+                                    <span class="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-bold text-blue-600">News</span>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-800 mb-1 leading-snug">Bank Sampah Ternate resmi dibuka!</h4>
+                                <p class="text-[10px] text-gray-400">Baru saja</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spacer buat mastiin konten paling bawah nggak ketutup navbar -->
+                    <div class="h-8"></div>
+                </main>
+            </div>
+
+            <!-- 5. BOTTOM NAVIGATION (Fixed at Bottom of Flex Container) -->
+            <!-- Karena ini di luar div scrollable (flex-1), dia akan selalu diam di bawah -->
+            <nav class="w-full bg-white border-t border-gray-100 px-6 py-2 pb-6 z-50 shadow-up relative">
+                <div class="flex justify-between items-center relative">
+                    <!-- Left Nav -->
+                    <button class="flex flex-col items-center gap-1 text-brand-purple p-2 w-14">
+                        <i class="ph-fill ph-house text-2xl"></i>
+                        <span class="text-[10px] font-bold">Home</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple p-2 w-14">
+                        <i class="ph-bold ph-clock-counter-clockwise text-2xl"></i>
+                        <span class="text-[10px] font-medium">Riwayat</span>
+                    </button>
+
+                    <!-- CENTER FLOATING BUTTON -->
+                    <!-- Menggunakan margin negatif atas (absolute position) agar terlihat 'mengambang' keluar dari navbar -->
+                    <div class="relative -top-8 group">
+                        <div class="absolute inset-0 bg-brand-purple rounded-full blur opacity-40 group-hover:opacity-60 transition"></div>
+                        <button class="relative w-16 h-16 bg-brand-dark rounded-full flex items-center justify-center text-white border-4 border-white shadow-xl transform transition group-hover:-translate-y-1">
+                            <i class="ph-bold ph-qr-code text-3xl text-brand-lime"></i>
+                        </button>
+                    </div>
+
+                    <!-- Right Nav -->
+                    <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple p-2 w-14">
+                        <i class="ph-bold ph-wallet text-2xl"></i>
+                        <span class="text-[10px] font-medium">Wallet</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-brand-purple p-2 w-14">
+                        <i class="ph-bold ph-user text-2xl"></i>
+                        <span class="text-[10px] font-medium">Profil</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <script>
+            function toggleOrder() {
+                const card = document.getElementById("activeOrderCard");
+                if (card.classList.contains("hidden")) {
+                    card.classList.remove("hidden");
+                    card.classList.add("flex"); // Ensure flex display when shown
+                } else {
+                    card.classList.add("hidden");
+                    card.classList.remove("flex");
+                }
+            }
+        </script>
+    </body>
+</html>

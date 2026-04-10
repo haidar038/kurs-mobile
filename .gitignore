@@ -46,7 +46,7 @@ app-example
 .env
 .vscode
 err
-docs
+# docs
 schema
 err
-references
+# references

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Request Pickup</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            /* Custom Radio Selection Style */
+            .volume-radio:checked + div {
+                border-color: #6a0dad;
+                background-color: #f4f1fa;
+            }
+            .volume-radio:checked + div .check-icon {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            .type-checkbox:checked + div {
+                background-color: #6a0dad;
+                color: white;
+                border-color: #6a0dad;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]">
+            <!-- HEADER -->
+            <header class="pt-8 px-6 pb-4 bg-white sticky top-0 z-20 flex items-center gap-4 border-b border-gray-50">
+                <button onclick="history.back()" class="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-slate-700 transition">
+                    <i class="ph-bold ph-arrow-left text-lg"></i>
+                </button>
+                <div>
+                    <h1 class="text-xl font-extrabold text-brand-dark">Jemput Sampah 🚛</h1>
+                    <p class="text-xs text-gray-400">Isi detail biar driver nggak nyasar</p>
+                </div>
+            </header>
+
+            <!-- SCROLLABLE FORM -->
+            <main class="flex-1 px-6 pb-32 overflow-y-auto no-scrollbar space-y-6 pt-4">
+                <!-- 1. LOCATION CARD -->
+                <section>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Lokasi Jemput</h3>
+                    <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm relative group cursor-pointer hover:border-brand-purple transition">
+                        <!-- Map Preview Background -->
+                        <div class="h-20 w-full bg-gray-200">
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover opacity-60" />
+                        </div>
+
+                        <div class="p-4 bg-white relative">
+                            <div class="absolute -top-6 right-4 w-10 h-10 bg-brand-purple rounded-full text-white flex items-center justify-center border-4 border-white shadow-md">
+                                <i class="ph-fill ph-map-pin"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-800 mb-1 pr-8">Rumah (Jl. Stikip Kie Raha)</h4>
+                            <p class="text-xs text-gray-500 line-clamp-1">Sasa, Kota Ternate, Ternate Selatan...</p>
+
+                            <button class="mt-3 w-full py-2 rounded-xl border border-gray-200 text-xs font-bold text-slate-600 hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-pencil-simple"></i> Ubah Lokasi
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PHOTOS (Horizontal Scroll) -->
+                <section>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Foto Sampah (Opsional)</h3>
+                        <span class="text-[10px] text-gray-400">0/5</span>
+                    </div>
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
+                        <!-- Add Button -->
+                        <button
+                            class="w-20 h-20 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-brand-purple hover:text-brand-purple hover:bg-brand-purple/5 transition flex-shrink-0"
+                        >
+                            <i class="ph-bold ph-camera text-2xl mb-1"></i>
+                            <span class="text-[10px] font-bold">Tambah</span>
+                        </button>
+                        <!-- Preview Placeholder -->
+                        <div class="w-20 h-20 rounded-2xl bg-gray-100 flex-shrink-0 relative overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4" class="w-full h-full object-cover opacity-80" />
+                            <button class="absolute top-1 right-1 w-5 h-5 bg-red-500 rounded-full text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="ph-bold ph-x text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. WASTE TYPE (Chips Grid) -->
+                <section>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Jenis Sampah</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <!-- Organic -->
+                        <label class="cursor-pointer">
+                            <input type="checkbox" class="type-checkbox hidden" checked />
+                            <div class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-500 transition hover:border-brand-purple">🍃 Organik</div>
+                        </label>
+                        <!-- Plastic -->
+                        <label class="cursor-pointer">
+                            <input type="checkbox" class="type-checkbox hidden" />
+                            <div class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-500 transition hover:border-brand-purple">🥤 Plastik</div>
+                        </label>
+                        <!-- Paper -->
+                        <label class="cursor-pointer">
+                            <input type="checkbox" class="type-checkbox hidden" />
+                            <div class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-500 transition hover:border-brand-purple">📄 Kertas</div>
+                        </label>
+                        <!-- Metal -->
+                        <label class="cursor-pointer">
+                            <input type="checkbox" class="type-checkbox hidden" />
+                            <div class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-500 transition hover:border-brand-purple">🔩 Logam</div>
+                        </label>
+                        <!-- B3 -->
+                        <label class="cursor-pointer">
+                            <input type="checkbox" class="type-checkbox hidden" />
+                            <div class="px-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-500 transition hover:border-brand-purple">⚠️ B3 (Bahaya)</div>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 4. VOLUME ESTIMATION (Interactive Cards) -->
+                <section>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Estimasi Volume</h3>
+                    <div class="space-y-3">
+                        <!-- Option: Small -->
+                        <label class="block relative cursor-pointer group">
+                            <input type="radio" name="volume" class="volume-radio hidden" checked />
+                            <div class="flex items-center gap-4 p-4 rounded-3xl border-2 border-gray-100 bg-white transition-all hover:border-brand-purple/50">
+                                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
+                                    <i class="ph-fill ph-bag text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="font-bold text-sm text-slate-800">Kecil (Motor)</h4>
+                                        <span class="text-sm font-bold text-brand-purple">Rp 10.000</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-0.5">Maks. 2 kantong kresek besar</p>
+                                </div>
+                                <!-- Check Icon -->
+                                <div class="w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center check-icon opacity-0 transform scale-50 transition-all duration-300">
+                                    <i class="ph-bold ph-check text-xs"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Option: Medium -->
+                        <label class="block relative cursor-pointer group">
+                            <input type="radio" name="volume" class="volume-radio hidden" />
+                            <div class="flex items-center gap-4 p-4 rounded-3xl border-2 border-gray-100 bg-white transition-all hover:border-brand-purple/50">
+                                <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500">
+                                    <i class="ph-fill ph-package text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="font-bold text-sm text-slate-800">Sedang (Tosa)</h4>
+                                        <span class="text-sm font-bold text-brand-purple">Rp 25.000</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-0.5">3-5 kantong / 1 trashbag penuh</p>
+                                </div>
+                                <div class="w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center check-icon opacity-0 transform scale-50 transition-all duration-300">
+                                    <i class="ph-bold ph-check text-xs"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Option: Large -->
+                        <label class="block relative cursor-pointer group">
+                            <input type="radio" name="volume" class="volume-radio hidden" />
+                            <div class="flex items-center gap-4 p-4 rounded-3xl border-2 border-gray-100 bg-white transition-all hover:border-brand-purple/50">
+                                <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-500">
+                                    <i class="ph-fill ph-truck text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="font-bold text-sm text-slate-800">Besar (Pickup)</h4>
+                                        <span class="text-sm font-bold text-brand-purple">Rp 50.000</span>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-0.5">Setara bak mobil pickup</p>
+                                </div>
+                                <div class="w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center check-icon opacity-0 transform scale-50 transition-all duration-300">
+                                    <i class="ph-bold ph-check text-xs"></i>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Note -->
+                <section>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Catatan (Opsional)</h3>
+                    <textarea
+                        placeholder="Pagar warna hitam, jangan dibunyikan klakson..."
+                        class="w-full p-4 bg-gray-50 rounded-2xl text-sm border border-transparent focus:bg-white focus:border-brand-purple focus:ring-4 focus:ring-brand-purple/10 transition outline-none resize-none h-24"
+                    ></textarea>
+                </section>
+            </main>
+
+            <!-- 5. STICKY BOTTOM BAR (Total & Action) -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 font-medium">Total Estimasi</span>
+                        <span class="text-2xl font-extrabold text-brand-dark">Rp 10.000</span>
+                    </div>
+                    <!-- Wallet Balance (Context) -->
+                    <div class="flex items-center gap-1 bg-brand-light px-2 py-1 rounded-lg">
+                        <i class="ph-fill ph-wallet text-brand-purple text-xs"></i>
+                        <span class="text-[10px] font-bold text-brand-purple">Saldo: Rp 50.000</span>
+                    </div>
+                </div>
+
+                <button class="w-full bg-brand-purple text-white font-bold text-lg py-3.5 rounded-2xl shadow-lg shadow-brand-purple/30 hover:bg-purple-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+                    <i class="ph-bold ph-paper-plane-right"></i>
+                    Kirim Permintaan
+                </button>
+            </div>
+        </div>
+    </body>
+</html>

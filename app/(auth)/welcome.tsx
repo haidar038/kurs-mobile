@@ -1,13 +1,13 @@
 import { useAuth } from "@/providers/AuthProvider";
 import { COLORS } from "@/utils/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import JagaBumiSecondary from "../../assets/images/jgbm-secondary.svg";
 
 export default function WelcomeScreen() {
     const router = useRouter();
@@ -75,11 +75,11 @@ export default function WelcomeScreen() {
                 style={{
                     width: 64,
                     height: 64,
-                    borderRadius: 20,
+                    borderRadius: 12,
                     backgroundColor: color + "10",
                     alignItems: "center",
                     justifyContent: "center",
-                    borderWidth: 1,
+                    // borderWidth: 1,
                     borderColor: color + "20",
                 }}
             >
@@ -124,16 +124,18 @@ export default function WelcomeScreen() {
                                     width: 100,
                                     height: 100,
                                     borderRadius: 32,
-                                    shadowColor: COLORS.primary,
-                                    shadowOffset: { width: 0, height: 10 },
-                                    shadowOpacity: 0.3,
-                                    shadowRadius: 20,
-                                    elevation: 8,
+                                    // shadowColor: COLORS.primary,
+                                    // shadowOffset: { width: 0, height: 10 },
+                                    // shadowOpacity: 0.3,
+                                    // shadowRadius: 20,
+                                    // elevation: 8,
                                     position: "relative",
-                                    backgroundColor: COLORS.surface, // Background for the shadow to pop if SVG is transparent-ish
+                                    // backgroundColor: COLORS.surface,
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                 }}
                             >
-                                <Image source={require("../../assets/images/jgbm-secondary.svg")} style={{ width: "100%", height: "100%", borderRadius: 32 }} contentFit="contain" />
+                                <JagaBumiSecondary width={80} height={80} />
                             </View>
                         </Animated.View>
 

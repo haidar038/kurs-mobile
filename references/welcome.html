@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Pilih Peran</title>
+
+        <!-- Fonts: Plus Jakarta Sans -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons: Phosphor Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD", // Primary
+                                lime: "#CCFF00", // Accent
+                                dark: "#1A1A2E", // Text Dark
+                                light: "#F4F1FA", // Background Light
+                            },
+                        },
+                        animation: {
+                            float: "float 6s ease-in-out infinite",
+                            "fade-up": "fadeUp 0.5s ease-out forwards",
+                        },
+                        keyframes: {
+                            float: {
+                                "0%, 100%": { transform: "translateY(0)" },
+                                "50%": { transform: "translateY(-10px)" },
+                            },
+                            fadeUp: {
+                                "0%": { opacity: "0", transform: "translateY(20px)" },
+                                "100%": { opacity: "1", transform: "translateY(0)" },
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <!-- Mobile Container -->
+        <div class="w-full max-w-md bg-white h-screen sm:h-[850px] flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100">
+            <!-- Decorative Background Gradients -->
+            <div class="absolute top-0 left-0 w-full h-80 bg-gradient-to-b from-brand-light to-white z-0"></div>
+            <!-- Orbit Circles Decor -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 border border-brand-purple/10 rounded-full z-0"></div>
+            <div class="absolute -top-10 -right-10 w-64 h-64 border border-brand-purple/5 rounded-full z-0"></div>
+
+            <!-- HEADER -->
+            <header class="pt-16 pb-6 px-8 relative z-10 text-center flex flex-col items-center">
+                <!-- Logo Container (Floating Animation) -->
+                <div class="w-24 h-24 bg-brand-purple rounded-3xl flex items-center justify-center shadow-xl shadow-brand-purple/20 mb-6 animate-float relative group">
+                    <!-- Abstract Orbit Ring inside logo -->
+                    <div class="absolute inset-2 border-2 border-white/20 rounded-full"></div>
+                    <!-- Icon -->
+                    <i class="ph-fill ph-planet text-5xl text-brand-lime drop-shadow-md"></i>
+
+                    <!-- Sparkle decor -->
+                    <i class="ph-fill ph-sparkle absolute -top-2 -right-2 text-brand-lime text-xl animate-pulse"></i>
+                </div>
+
+                <h1 class="text-3xl font-extrabold text-brand-dark mb-2 tracking-tight">Halo, Warga Bumi! 👋</h1>
+                <p class="text-gray-400 font-medium text-sm px-8 leading-relaxed">Pilih peran kamu untuk mulai menyelamatkan lingkungan hari ini.</p>
+            </header>
+
+            <!-- CONTENT: Role Selection Cards -->
+            <main class="flex-1 px-6 flex flex-col justify-center gap-4 relative z-10 -mt-4">
+                <!-- Role 1: Warga (Green Theme - Primary Audience) -->
+                <button
+                    class="group relative w-full bg-white p-5 rounded-3xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50/30 transition-all duration-300 text-left shadow-sm hover:shadow-lg hover:-translate-y-1 animate-fade-up"
+                    style="animation-delay: 0.1s"
+                >
+                    <div class="flex items-center gap-5">
+                        <!-- Icon Box -->
+                        <div class="w-16 h-16 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                            <i class="ph-fill ph-recycle text-3xl"></i>
+                        </div>
+                        <!-- Text -->
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-green-700 transition-colors">Warga / User</h3>
+                            <p class="text-xs text-gray-400 group-hover:text-gray-600 mt-1">Setor sampah, dapat poin & reward menarik</p>
+                        </div>
+                        <!-- Arrow -->
+                        <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-green-200 group-hover:text-green-800 transition-all">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Role 2: Mitra Collector (Blue Theme - Professional) -->
+                <button
+                    class="group relative w-full bg-white p-5 rounded-3xl border-2 border-gray-100 hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300 text-left shadow-sm hover:shadow-lg hover:-translate-y-1 animate-fade-up"
+                    style="animation-delay: 0.2s"
+                >
+                    <div class="flex items-center gap-5">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                            <i class="ph-fill ph-moped text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-blue-700 transition-colors">Mitra Driver</h3>
+                            <p class="text-xs text-gray-400 group-hover:text-gray-600 mt-1">Jemput sampah warga & kelola armada</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-200 group-hover:text-blue-800 transition-all">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Role 3: Staff Bank Sampah (Purple Theme - Brand/Admin) -->
+                <button
+                    class="group relative w-full bg-white p-5 rounded-3xl border-2 border-gray-100 hover:border-brand-purple hover:bg-brand-purple/5 transition-all duration-300 text-left shadow-sm hover:shadow-lg hover:-translate-y-1 animate-fade-up"
+                    style="animation-delay: 0.3s"
+                >
+                    <div class="flex items-center gap-5">
+                        <div class="w-16 h-16 rounded-2xl bg-purple-50 text-brand-purple flex items-center justify-center group-hover:bg-brand-purple group-hover:text-white transition-all duration-300 shadow-sm">
+                            <i class="ph-fill ph-buildings text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-brand-purple transition-colors">Staff Bank Sampah</h3>
+                            <p class="text-xs text-gray-400 group-hover:text-gray-600 mt-1">Kelola operasional & validasi setoran</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-purple-200 group-hover:text-brand-purple transition-all">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </div>
+                    </div>
+                </button>
+            </main>
+
+            <!-- FOOTER -->
+            <footer class="p-8 text-center relative z-10 pb-10">
+                <p class="text-sm text-gray-400 font-medium">
+                    Belum punya akun?
+                    <a href="#" class="text-brand-purple font-bold hover:underline decoration-brand-lime decoration-2 underline-offset-4">Daftar Sekarang</a>
+                </p>
+
+                <!-- Version / Build Info -->
+                <div class="mt-8 flex flex-col items-center gap-2 opacity-50">
+                    <div class="h-1 w-12 bg-gray-200 rounded-full"></div>
+                    <p class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Jaga Bumi v2.0</p>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

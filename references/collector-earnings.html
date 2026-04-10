@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Pendapatan Driver</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#121212",
+                                card: "#1E1E1E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <!-- Container (Dark Mode) -->
+        <div class="w-full max-w-md bg-brand-dark h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-900 sm:h-[90vh] text-white">
+            <!-- HEADER -->
+            <header class="pt-8 px-6 pb-2 bg-brand-dark/90 backdrop-blur-sm sticky top-0 z-20">
+                <h1 class="font-bold text-xl mb-6">Dompet & Performa</h1>
+
+                <!-- Wallet Hero Card -->
+                <div class="bg-gradient-to-br from-brand-purple to-purple-900 rounded-3xl p-6 relative overflow-hidden shadow-lg shadow-purple-900/50 mb-6 group">
+                    <!-- Abstract Pattern -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+
+                    <div class="relative z-10">
+                        <p class="text-xs font-medium text-purple-200 mb-1">Saldo Bisa Ditarik</p>
+                        <h2 class="text-4xl font-extrabold text-white mb-6">Rp 450.000</h2>
+
+                        <div class="flex gap-3">
+                            <button class="flex-1 bg-brand-lime text-brand-dark font-bold text-sm py-2.5 rounded-xl shadow-md hover:bg-white transition flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-bank"></i> Tarik Dana
+                            </button>
+                            <button class="w-12 bg-white/10 text-white rounded-xl flex items-center justify-center hover:bg-white/20 transition">
+                                <i class="ph-bold ph-gear"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENT -->
+            <main class="flex-1 px-6 pb-24 overflow-y-auto no-scrollbar">
+                <!-- 1. WEEKLY CHART (Integrated Chart.js) -->
+                <section class="mb-8">
+                    <div class="flex justify-between items-end mb-4">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Performa Minggu Ini</h3>
+                        <span class="text-xs font-bold text-brand-lime">+12% vs lalu</span>
+                    </div>
+
+                    <div class="bg-brand-card p-4 rounded-3xl border border-gray-800 h-64 relative">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- 2. TRANSACTION HISTORY -->
+                <section>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Riwayat Transaksi</h3>
+
+                    <div class="space-y-4">
+                        <!-- Item 1: Income (Green) -->
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 group-hover:border-green-500 transition">
+                                    <i class="ph-fill ph-arrow-down-left text-green-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">Jemputan Sasa</h4>
+                                    <p class="text-xs text-gray-500">14 Feb • 15:30</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-green-500">+Rp 10.000</span>
+                        </div>
+
+                        <!-- Item 2: Income (Green) -->
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 group-hover:border-green-500 transition">
+                                    <i class="ph-fill ph-arrow-down-left text-green-500"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">Jemputan Gambesi</h4>
+                                    <p class="text-xs text-gray-500">14 Feb • 14:15</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-green-500">+Rp 50.000</span>
+                        </div>
+
+                        <!-- Item 3: Withdrawal (White/Red) -->
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700 group-hover:border-white transition">
+                                    <i class="ph-fill ph-arrow-up-right text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">Tarik ke BCA</h4>
+                                    <p class="text-xs text-gray-500">13 Feb • 20:00</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-white">-Rp 100.000</span>
+                        </div>
+
+                        <!-- Item 4: Bonus (Purple) -->
+                        <div class="flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-purple/20 flex items-center justify-center border border-brand-purple/50">
+                                    <i class="ph-fill ph-gift text-brand-purple"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">Insentif Mingguan</h4>
+                                    <p class="text-xs text-gray-500">12 Feb • 00:00</p>
+                                </div>
+                            </div>
+                            <span class="font-bold text-sm text-brand-purple">+Rp 75.000</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- BOTTOM NAV (Driver Version) -->
+            <nav class="absolute bottom-0 w-full bg-brand-card border-t border-gray-800 px-6 py-4 flex justify-between items-center z-20">
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-squares-four text-2xl"></i>
+                    <span class="text-[10px] font-medium">Dashboard</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-clock-counter-clockwise text-2xl"></i>
+                    <span class="text-[10px] font-medium">Riwayat</span>
+                </div>
+                <!-- Active State -->
+                <div class="flex flex-col items-center gap-1 text-brand-lime">
+                    <i class="ph-fill ph-wallet text-2xl"></i>
+                    <span class="text-[10px] font-bold">Dompet</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 text-gray-500 hover:text-white transition cursor-pointer">
+                    <i class="ph-bold ph-user text-2xl"></i>
+                    <span class="text-[10px] font-medium">Profil</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Chart.js Configuration -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById("weeklyChart");
+
+            // Font Configuration
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+            Chart.defaults.color = "#9CA3AF";
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Sn", "Sl", "Rb", "Km", "Jm", "Sb", "Mg"],
+                    datasets: [
+                        {
+                            label: "Pendapatan",
+                            data: [40000, 60000, 30000, 80000, 150000, 10000, 0],
+                            backgroundColor: [
+                                "#374151", // Gray (Inactive)
+                                "#374151",
+                                "#374151",
+                                "#374151",
+                                "#CCFF00", // Lime (Today/Active)
+                                "#374151",
+                                "#374151",
+                            ],
+                            hoverBackgroundColor: "#6A0DAD", // Purple on hover
+                            borderRadius: 6,
+                            borderSkipped: false,
+                            barThickness: 18,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: "#6A0DAD",
+                            padding: 10,
+                            titleColor: "#fff",
+                            bodyColor: "#fff",
+                            displayColors: false,
+                            cornerRadius: 8,
+                            callbacks: {
+                                title: () => null, // Hide title
+                                label: function (context) {
+                                    return "Rp " + context.raw.toLocaleString("id-ID");
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: "#374151", // Darker grid lines
+                                drawBorder: false,
+                                tickLength: 0,
+                            },
+                            ticks: {
+                                color: "#6B7280",
+                                font: { size: 10 },
+                                callback: function (value) {
+                                    if (value === 0) return 0;
+                                    return value / 1000 + "k";
+                                },
+                            },
+                            border: { display: false },
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: "#9CA3AF",
+                                font: { size: 11, weight: "bold" },
+                            },
+                            border: { display: false },
+                        },
+                    },
+                },
+            });
+        </script>
+    </body>
+</html>

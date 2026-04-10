@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jaga Bumi - Detail Artikel</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet" />
+
+        <!-- Icons -->
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ["Plus Jakarta Sans", "sans-serif"],
+                            serif: ["Merriweather", "serif"],
+                        },
+                        colors: {
+                            brand: {
+                                purple: "#6A0DAD",
+                                lime: "#CCFF00",
+                                dark: "#1A1A2E",
+                                light: "#F4F1FA",
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            /* Reading Progress Bar */
+            #progress-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                z-index: 50;
+                background: transparent;
+            }
+            #progress-bar {
+                height: 4px;
+                background: #ccff00;
+                width: 0%;
+                transition: width 0.1s;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 flex justify-center min-h-screen font-sans text-slate-800 items-center">
+        <div class="w-full max-w-md bg-white h-screen flex flex-col relative overflow-hidden shadow-2xl sm:rounded-[40px] border border-gray-100 sm:h-[90vh]" id="scroll-container">
+            <!-- READING PROGRESS -->
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <!-- 1. IMMERSIVE HERO IMAGE -->
+            <div class="h-80 w-full relative shrink-0">
+                <img src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60"></div>
+
+                <!-- Navigation -->
+                <div class="absolute top-8 left-6 right-6 flex justify-between items-center z-10">
+                    <button onclick="history.back()" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-brand-dark transition">
+                        <i class="ph-bold ph-arrow-left text-lg"></i>
+                    </button>
+                    <div class="flex gap-2">
+                        <button class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-brand-purple transition">
+                            <i class="ph-fill ph-bookmark-simple text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white hover:text-brand-purple transition">
+                            <i class="ph-bold ph-share-network text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Tag (On Image) -->
+                <div class="absolute bottom-14 left-6">
+                    <span class="px-3 py-1 bg-brand-lime text-brand-dark text-[10px] font-bold rounded-full uppercase tracking-wider shadow-lg"> Education </span>
+                </div>
+            </div>
+
+            <!-- 2. CONTENT SHEET -->
+            <main class="flex-1 bg-white -mt-10 rounded-t-[40px] relative z-0 px-6 pt-8 pb-32 overflow-y-auto no-scrollbar scroll-smooth" onscroll="updateProgress()">
+                <!-- Meta Info -->
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs text-gray-400 font-medium">11 Februari 2026 • 5 min baca</span>
+                    <div class="flex items-center gap-2">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-6 h-6 rounded-full border border-gray-100" />
+                        <span class="text-xs font-bold text-slate-700">Admin JagaBumi</span>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-2xl font-extrabold text-brand-dark leading-tight mb-6">Mengubah Sampah Dapur Menjadi Berkah: Panduan Sederhana Kompos</h1>
+
+                <!-- Article Body -->
+                <article class="prose prose-sm prose-slate max-w-none">
+                    <p class="text-gray-600 leading-relaxed mb-4">
+                        Setiap hari, aktivitas dapur kita menghasilkan sisa-sisa bahan alami yang seringkali berakhir begitu saja di tempat pembuangan akhir (TPA). Padahal, <strong class="text-brand-purple">sampah organik</strong>—seperti
+                        sisa sayuran, kulit buah, dan daun kering—memiliki potensi besar.
+                    </p>
+
+                    <!-- Interactive "Did You Know" Box -->
+                    <div class="my-6 bg-brand-light border-l-4 border-brand-purple p-4 rounded-r-xl">
+                        <h4 class="flex items-center gap-2 font-bold text-brand-purple text-sm mb-1"><i class="ph-fill ph-lightbulb text-lg"></i> Tahukah Kamu?</h4>
+                        <p class="text-xs text-slate-600 italic">Sampah organik yang tertimbun di TPA tanpa oksigen menghasilkan gas Metana, yang 25x lebih berbahaya bagi lapisan ozon daripada CO2!</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-brand-dark mb-2">Mengapa Harus Mengolahnya?</h3>
+                    <p class="text-gray-600 leading-relaxed mb-4">
+                        Dengan mengolahnya sendiri di rumah, kita tidak hanya mengurangi volume sampah, tetapi juga menciptakan sumber daya baru yang berguna untuk taman atau kebun kecil kita. Ini adalah langkah kecil yang berdampak besar.
+                    </p>
+
+                    <!-- Image within content -->
+                    <div class="my-6 rounded-2xl overflow-hidden relative h-48 w-full group">
+                        <img src="https://images.unsplash.com/photo-1591193686104-fddba4d0e4d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                        <div class="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">Ilustrasi Kompos</div>
+                    </div>
+
+                    <h3 class="text-lg font-bold text-brand-dark mb-2">Langkah Mudah Memulai</h3>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex gap-3 items-start bg-gray-50 p-3 rounded-xl">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">1</span>
+                            <span class="text-sm text-gray-600">Siapkan wadah ember bekas yang sudah dilubangi kecil-kecil.</span>
+                        </li>
+                        <li class="flex gap-3 items-start bg-gray-50 p-3 rounded-xl">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">2</span>
+                            <span class="text-sm text-gray-600">Masukkan sampah coklat (daun kering) sebagai dasar.</span>
+                        </li>
+                        <li class="flex gap-3 items-start bg-gray-50 p-3 rounded-xl">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">3</span>
+                            <span class="text-sm text-gray-600">Tumpuk dengan sampah hijau (sisa sayur/buah).</span>
+                        </li>
+                    </ul>
+
+                    <p class="text-gray-600 leading-relaxed">Tunggu selama 2-3 minggu, dan *voila*! Kamu punya pupuk gratis.</p>
+                </article>
+
+                <div class="w-full h-px bg-gray-100 my-8"></div>
+
+                <!-- Reaction Section -->
+                <div class="text-center mb-8">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Apakah artikel ini membantu?</p>
+                    <div class="flex justify-center gap-4">
+                        <button class="flex flex-col items-center gap-1 group">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl group-hover:bg-brand-lime transition">🔥</div>
+                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-brand-dark">Keren</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-1 group">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl group-hover:bg-blue-100 transition">💡</div>
+                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-blue-500">Paham</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-1 group">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl group-hover:bg-red-100 transition">🤔</div>
+                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-red-500">Bingung</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Related Articles -->
+                <div class="mb-6">
+                    <h3 class="font-bold text-lg text-brand-dark mb-4">Baca Juga</h3>
+                    <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                        <div class="min-w-[200px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm cursor-pointer hover:border-brand-purple transition">
+                            <div class="h-24 rounded-xl bg-gray-200 mb-2 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9" class="w-full h-full object-cover" />
+                            </div>
+                            <h4 class="font-bold text-xs text-slate-800 line-clamp-2">Jenis Plastik yang Bisa Didaur Ulang</h4>
+                        </div>
+                        <div class="min-w-[200px] bg-white rounded-2xl p-3 border border-gray-100 shadow-sm cursor-pointer hover:border-brand-purple transition">
+                            <div class="h-24 rounded-xl bg-gray-200 mb-2 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09" class="w-full h-full object-cover" />
+                            </div>
+                            <h4 class="font-bold text-xs text-slate-800 line-clamp-2">Bahaya Membakar Sampah Rumah Tangga</h4>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 3. STICKY BOTTOM ACTION (Engagement) -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 pb-6 z-20 flex items-center gap-4 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <div class="flex-1">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase">Siap beraksi?</p>
+                    <p class="text-xs font-bold text-brand-dark">Setor hasil kompos kamu!</p>
+                </div>
+
+                <button class="bg-brand-purple text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-brand-purple/30 hover:bg-purple-800 transition flex items-center gap-2 group">
+                    <i class="ph-bold ph-map-pin"></i>
+                    Cari Bank Sampah
+                </button>
+            </div>
+        </div>
+
+        <script>
+            // Simple script to update reading progress bar
+            function updateProgress() {
+                const container = document.querySelector("main");
+                const scrollTop = container.scrollTop;
+                const scrollHeight = container.scrollHeight - container.clientHeight;
+                const progress = (scrollTop / scrollHeight) * 100;
+                document.getElementById("progress-bar").style.width = progress + "%";
+            }
+        </script>
+    </body>
+</html>
